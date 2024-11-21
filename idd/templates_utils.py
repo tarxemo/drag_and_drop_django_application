@@ -83,7 +83,7 @@ def generate_template(username, table_name, action):
     return complete_html
 
 
-def generate_template(template_id):
+def generate_template_by_id(template_id):
     template = get_object_or_404(Template, id=template_id)
 
     # Build tag tree and handle Django tags

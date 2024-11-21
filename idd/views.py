@@ -51,7 +51,7 @@ def delete_template(request, template_id):
 
 def template_detail(request, template_id):
     template = get_object_or_404(Template, id=template_id)
-    html_structure = generate_template(template_id)
+    html_structure = generate_template_by_id(template_id)
     csrf_token = get_token(request)
     return render(request, 'template_detail.html', {
         'template': template,
