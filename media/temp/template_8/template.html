@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   admin_Tag_add
+  </title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.0/dist/tailwind.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"/>
+ </head>
+ <body>
+  <div class="container mx-auto" id="-1">
+   <form action="" class="max-w-md mx-auto bg-[#003161] p-6 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg mt-10 space-y-4" method="POST">
+    <django_tag class="">
+     {% csrf_token %}
+    </django_tag>
+    <div class="">
+     <label class="block font-semibold" for="template">
+      Template
+     </label>
+     <input class="form-input block mt-1 w-full rounded-md focus:outline-none focus:ring-2 p-2 focus:ring-[#000B58] transition duration-200 ease-in-out transform hover:scale-105" id="template" name="template" required="" type="text"/>
+    </div>
+    <div class="">
+     <label class="block font-semibold" for="parent_tag">
+      Parent Tag
+     </label>
+     <input class="form-input block mt-1 w-full rounded-md focus:outline-none focus:ring-2 p-2 focus:ring-[#000B58] transition duration-200 ease-in-out transform hover:scale-105" id="parent_tag" name="parent_tag" required="" type="text"/>
+    </div>
+    <div class="">
+     <label class="block font-semibold" for="tag_name">
+      Tag Name
+     </label>
+     <input class="form-input block mt-1 w-full rounded-md focus:outline-none focus:ring-2 p-2 focus:ring-[#000B58] transition duration-200 ease-in-out transform hover:scale-105" id="tag_name" name="tag_name" required="" type="text"/>
+    </div>
+    <div class="">
+     <label class="block font-semibold" for="text_content">
+      Text Content
+     </label>
+     <input class="form-input block mt-1 w-full rounded-md focus:outline-none focus:ring-2 p-2 focus:ring-[#000B58] transition duration-200 ease-in-out transform hover:scale-105" id="text_content" name="text_content" required="" type="text"/>
+    </div>
+    <div class="">
+     <label class="block font-semibold" for="django_tag_type">
+      Django Tag Type
+     </label>
+     <input class="form-input block mt-1 w-full rounded-md focus:outline-none focus:ring-2 p-2 focus:ring-[#000B58] transition duration-200 ease-in-out transform hover:scale-105" id="django_tag_type" name="django_tag_type" required="" type="text"/>
+    </div>
+    <div class="">
+     <label class="block font-semibold" for="position">
+      Position
+     </label>
+     <input class="form-input block mt-1 w-full rounded-md focus:outline-none focus:ring-2 p-2 focus:ring-[#000B58] transition duration-200 ease-in-out transform hover:scale-105" id="position" name="position" required="" type="text"/>
+    </div>
+    <button class="w-full rounded-md py-2 px-4 transition-all duration-300 font-semibold ease-in-out transform hover:scale-105 bg-[#000B58] hover:bg-[#003161]" type="submit">
+     Submit
+    </button>
+   </form>
+   <button class="">
+    Added content
+   </button>
+  </div>
+ </body>
+</html>

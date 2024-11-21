@@ -79,12 +79,65 @@ def generate_template(username, table_name, action):
     </body>
     </html>
     """
-    
-    
+
     return complete_html
 
 
+def generate_template(template_id):
+    template = get_object_or_404(Template, id=template_id)
 
+    # Build tag tree and handle Django tags
+    def build_tag_tree(tag, indent_level=0):
+        indent = '    ' * indent_level
+        attributes = ' '.join(
+            [f'{attr.attribute_name}="{attr.attribute_value}"' for attr in tag.attributes.all()] +
+            [f'class="{" ".join(cls.class_name.class_name for cls in tag.tagclasses.all())}"'] +
+            [f'id="{tag.id}"']
+        )
+        
+        # Process django_tag_type to insert corresponding template tags
+        if tag.django_tag_type in {'csrf_token', 'for', 'if', 'block', 'extends', 'endif', 'endblock', 'endfor'}:
+            content = f'{tag.text_content}'
+        else:
+            content = tag.text_content or ''
+
+        # Recursive call to include children
+        children = ''.join(build_tag_tree(child, indent_level + 1) for child in tag.children.all().order_by('position'))
+        content += children
+
+        # Handle opening and closing tags, self-closing tags, and block endings
+        if tag.django_tag_type in {'csrf_token', 'for', 'if', 'block', 'extends', 'endif', 'endblock', 'endfor'}:
+            return f'{indent}{content}\n'
+        if tag.tag_name == "img":
+            return f'{indent}<{tag.tag_name} {attributes} src="{tag.image.image.url}" />\n'
+        else:
+            return f'{indent}<{tag.tag_name} {attributes}>{content}</{tag.tag_name}>\n'
+    
+    # Build the root structure from top-level tags
+    root_tags = Tag.objects.filter(template=template, parent_tag__isnull=True).order_by('position')
+    html_structure = ''.join(build_tag_tree(tag, 1) for tag in root_tags)
+
+    # Complete HTML template structure
+    error = "{% endif %}"
+    complete_html = f"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{template.name}</title>
+        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.0/dist/tailwind.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    </head>
+    <body>
+    <div class="container mx-auto" id="-1">
+    {html_structure}
+    </div>
+    </body>
+    </html>
+    """
+
+    return complete_html
 
 from django.conf import settings
 from bs4 import BeautifulSoup
