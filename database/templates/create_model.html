@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold text-center text-[#091057] mb-6">Create New Model</h1>
+    
+    <form id="createModelForm" class="bg-white rounded-lg shadow-lg p-8 animate-fadeIn">
+        {% csrf_token %}
+        <div class="mb-4">
+            <label for="model_name" class="text-lg font-semibold text-[#091057]">Model Name</label>
+            <input type="text" id="model_name" name="model_name" class="mt-2 p-2 border border-gray-300 rounded-lg w-full focus:outline-none focus:ring focus:ring-[#133E87] transition duration-200" placeholder="Enter model name" required>
+        </div>
+
+        <div id="fields-container" class="space-y-6"></div>
+
+        <button type="button" id="addField" class="px-4 py-2 bg-[#133E87] text-white font-semibold rounded-lg shadow-lg hover:bg-[#0a5b97] transition ease-in-out duration-300 mb-6">Add Field</button>
+
+        <div class="mt-8 text-center">
+            <button type="submit" class="px-6 py-3 bg-[#133E87] text-white font-semibold rounded-lg shadow-lg hover:bg-[#0a5b97] transition ease-in-out duration-300">
+                Create Model
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const fieldsContainer = document.getElementById('fields-container');
+
+        // Function to add a new field
+        document.getElementById('addField').addEventListener('click', () => {
+            const uniqueFieldId = `field_${Date.now()}`;
+            
+            const fieldBlock = document.createElement('div');
+            fieldBlock.className = 'field-block flex flex-col border-b-2 border-gray-200 pb-4 mb-4';
+            fieldBlock.setAttribute('data-field-id', uniqueFieldId);
+
+            fieldBlock.innerHTML = `
+                <div class="flex justify-between items-center">
+                    <input type="text" name="field_name" placeholder="Enter Field Name" class="field-name-input mt-2 p-2 border border-gray-300 rounded-lg flex-1 focus:outline-none focus:ring focus:ring-[#133E87] transition duration-200">
+                    <button type="button" class="remove-field text-red-600 hover:underline">Remove Field</button>
+                </div>
+                <select name="${uniqueFieldId}_type" class="mt-2 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-[#133E87] transition duration-200">
+                    <option value="AutoField">AutoField</option>
+                    <option value="DateTimeField">DateTimeField</option>
+                    <option value="ForeignKey">ForeignKey</option>
+                    <option value="TextField">TextField</option>
+                    <option value="CharField">CharField</option>
+                    <option value="PositiveSmallIntegerField">PositiveSmallIntegerField</option>
+                </select>
+                <div class="mt-4 parameters-container" data-field-id="${uniqueFieldId}">
+                    <h3 class="font-semibold text-[#091057]">Parameters:</h3>
+                    <button type="button" class="add-param mt-2 text-blue-600 hover:underline">Add Parameter</button>
+                </div>
+            `;
+
+            fieldsContainer.appendChild(fieldBlock);
+
+            // Add event listeners for the new field
+            fieldBlock.querySelector('.add-param').addEventListener('click', (event) => {
+                addParameter(event.target.closest('.parameters-container'));
+            });
+
+            fieldBlock.querySelector('.remove-field').addEventListener('click', () => {
+                fieldsContainer.removeChild(fieldBlock);
+            });
+        });
+
+        // Function to add a parameter
+        function addParameter(container) {
+            const paramBlock = document.createElement('div');
+            paramBlock.className = 'parameter flex items-center space-x-2 mt-2';
+
+            paramBlock.innerHTML = `
+                <input type="text" name="param_name" class="p-2 border border-gray-300 rounded-lg flex-1" placeholder="Parameter Name">
+                <input type="text" name="param_value" class="p-2 border border-gray-300 rounded-lg flex-1" placeholder="Parameter Value">
+                <select name="param_type" class="p-2 border border-gray-300 rounded-lg">
+                    <option value="integer">Integer</option>
+                    <option value="string">String</option>
+                    <option value="boolean">Boolean</option>
+                </select>
+                <button type="button" class="remove-param text-red-600 hover:underline">Remove</button>
+            `;
+
+            container.appendChild(paramBlock);
+
+            paramBlock.querySelector('.remove-param').addEventListener('click', () => {
+                container.removeChild(paramBlock);
+            });
+        }
+
+        // Submit form and create JSON data structure
+        document.getElementById('createModelForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const jsonData = {
+                "model_name": document.getElementById('model_name').value,
+                "fields": {}
+            };
+
+            document.querySelectorAll('.field-block').forEach(fieldBlock => {
+                const fieldId = fieldBlock.getAttribute('data-field-id');
+                const fieldName = fieldBlock.querySelector('.field-name-input').value;
+                const fieldType = fieldBlock.querySelector(`select[name="${fieldId}_type"]`).value;
+
+                if (fieldName) {
+                    jsonData["fields"][fieldName] = {
+                        "type": fieldType,
+                        "params": {}
+                    };
+
+                    const paramNames = fieldBlock.querySelectorAll('.parameters-container input[name="param_name"]');
+                    const paramValues = fieldBlock.querySelectorAll('.parameters-container input[name="param_value"]');
+                    const paramTypes = fieldBlock.querySelectorAll('.parameters-container select[name="param_type"]');
+
+                    paramNames.forEach((paramName, index) => {
+                        const paramValue = paramValues[index].value;
+                        const paramType = paramTypes[index].value;
+
+                        jsonData["fields"][fieldName]["params"][paramName.value] = {
+                            "value": paramValue,
+                            "value_type": paramType
+                        };
+                    });
+                }
+            });
+
+            fetch('{% url "dynamic-model-list-create" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify(jsonData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '{% url "list_models" %}';
+                } else {
+                    console.error(data.error);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+</script>
+
+<style>
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeIn {
+    animation: fadeIn 0.5s ease-in-out;
+}
+</style>
+{% endblock %}

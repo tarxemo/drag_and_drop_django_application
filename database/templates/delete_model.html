@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Delete Model: {{ model_name }}</h1>
+<p>Are you sure you want to delete this model?</p>
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit">Yes, Delete</button>
+    <a href="{% url 'view_model' model_name %}">Cancel</a>
+</form>
+{% endblock %}

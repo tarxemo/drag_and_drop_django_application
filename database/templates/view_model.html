@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold text-center text-[#091057] mb-6">
+        Model Details for: {{model_details.model_name}}
+    </h1>
+    <div class="bg-white rounded-lg shadow-lg p-8 animate-fadeIn">
+        <h2 class="text-3xl font-semibold text-[#091057] mb-4 border-b-2 border-[#133E87] pb-2">
+            Fields
+        </h2>
+        <div class="mb-8">
+            <ul class="space-y-6">
+                {% for field_name, field_info in model_details.fields.items %}
+                <li class="p-4 rounded-lg shadow-sm bg-gray-50 hover:bg-gray-100 transition ease-in-out duration-300">
+                    <h4 class="text-xl font-semibold text-[#091057]">{{ field_name }}</h4>
+                    <p class="text-gray-600 mt-1">
+                        Type: <span class="font-medium text-[#133E87]">{{ field_info.type }}</span>
+                    </p>
+                    <div class="mt-2 space-y-1">
+                        <p class="text-sm font-semibold text-gray-700">Parameters:</p>
+                        <ul class="ml-4 list-disc list-inside text-gray-700">
+                            {% for param, param_details in field_info.params.items %}
+                            <li>
+                                <span class="font-medium text-[#133E87]">{{ param|title }}</span>:
+                                <span class="text-gray-600">{{ param_details.value }} ({{ param_details.value_type }})</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="mt-8 text-center">
+            <a href="{% url 'list_models' %}" class="inline-flex items-center px-6 py-3 bg-[#133E87] text-white font-semibold rounded-lg shadow-lg hover:bg-[#0a5b97] transition ease-in-out duration-300">
+                Back to Models
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<style>
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.5s ease-in-out;
+}
+</style>

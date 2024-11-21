@@ -1,0 +1,213 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold text-center text-[#091057] mb-6">Edit Model: <span class="text-[#133E87]">{{ model_name }}</span></h1>
+    <form id="editModelForm" class="bg-white rounded-lg shadow-lg p-8 animate-fadeIn">
+        {% csrf_token %}
+        <div id="fields-container" class="space-y-6">
+            {% for field_name, field_info in model_details.fields.items %}
+            <div class="field-block flex flex-col border-b-2 border-gray-200 pb-4 mb-4">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-lg font-semibold text-[#091057]">{{ field_name }}</h2>
+                    <button type="button" class="remove-field text-red-600 hover:underline">Remove Field</button>
+                </div>
+                
+                <input type="text" id="{{ field_name }}" name="{{ field_name }}" value="{{ field_name }}" class="mt-2 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-[#133E87] transition duration-200" placeholder="Field Name">
+                
+                <select id="{{ field_name }}_type" name="{{ field_name }}_type" class="mt-2 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-[#133E87] transition duration-200">
+                    <option value="AutoField" {% if field_info.type == 'AutoField' %}selected{% endif %}>AutoField</option>
+                    <option value="DateTimeField" {% if field_info.type == 'DateTimeField' %}selected{% endif %}>DateTimeField</option>
+                    <option value="ForeignKey" {% if field_info.type == 'ForeignKey' %}selected{% endif %}>ForeignKey</option>
+                    <option value="TextField" {% if field_info.type == 'TextField' %}selected{% endif %}>TextField</option>
+                    <option value="CharField" {% if field_info.type == 'CharField' %}selected{% endif %}>CharField</option>
+                    <option value="PositiveSmallIntegerField" {% if field_info.type == 'PositiveSmallIntegerField' %}selected{% endif %}>PositiveSmallIntegerField</option>
+                </select>
+                
+                <div class="mt-4 parameters-container">
+                    <h3 class="font-semibold text-[#091057]">Parameters:</h3>
+                    
+                    {% for param, param_info in field_info.params.items %}
+                    <div class="parameter flex items-center space-x-2 mt-2">
+                        <!-- Parameter name input -->
+                        <input type="text" name="{{ field_name }}_params[]" value="{{ param }}" class="p-2 border border-gray-300 rounded-lg flex-1" placeholder="Parameter Name">
+                    
+                        <!-- Parameter value input -->
+                        <input type="text" name="{{ field_name }}_param_values[]" value="{{ param_info.value }}" class="p-2 border border-gray-300 rounded-lg flex-1" placeholder="Parameter Value">
+                    
+                        <!-- Parameter value type input -->
+                        <select name="{{ field_name }}_param_value_types[]" class="p-2 border border-gray-300 rounded-lg flex-1">
+                            <option value="boolean" {% if param_info.value_type == 'boolean' %}selected{% endif %}>Boolean</option>
+                            <option value="integer" {% if param_info.value_type == 'integer' %}selected{% endif %}>Integer</option>
+                            <option value="string" {% if param_info.value_type == 'string' %}selected{% endif %}>String</option>
+                            <option value="float" {% if param_info.value_type == 'float' %}selected{% endif %}>Float</option>
+                        </select>
+                    
+                        <button type="button" class="remove-param text-red-600 hover:underline">Remove</button>
+                    </div>
+                    {% endfor %}
+                    
+                    <button type="button" class="add-param mt-2 text-blue-600 hover:underline">Add Parameter</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <button type="button" id="addField" class="px-4 py-2 bg-[#133E87] text-white font-semibold rounded-lg shadow-lg hover:bg-[#0a5b97] transition ease-in-out duration-300 mb-6">Add Field</button>
+        
+        <div class="mt-8 text-center">
+            <button type="submit" class="px-6 py-3 bg-[#133E87] text-white font-semibold rounded-lg shadow-lg hover:bg-[#0a5b97] transition ease-in-out duration-300">
+                Update Model
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const fieldsContainer = document.getElementById('fields-container');
+        
+        function addParameter(container, fieldName) {
+            const paramInput = document.createElement('div');
+            paramInput.className = 'parameter flex items-center space-x-2 mt-2';
+            
+            paramInput.innerHTML = `
+                <!-- Parameter name input -->
+                <input type="text" name="${fieldName}_params[]" class="p-2 border border-gray-300 rounded-lg flex-1" placeholder="Parameter Name">
+                
+                <!-- Parameter value input -->
+                <input type="text" name="${fieldName}_param_values[]" class="p-2 border border-gray-300 rounded-lg flex-1" placeholder="Parameter Value">
+                
+                <!-- Parameter value type input -->
+                <select name="${fieldName}_param_value_types[]" class="p-2 border border-gray-300 rounded-lg flex-1">
+                    <option value="boolean">Boolean</option>
+                    <option value="integer">Integer</option>
+                    <option value="string">String</option>
+                    <option value="float">Float</option>
+                </select>
+                
+                <button type="button" class="remove-param text-red-600 hover:underline">Remove</button>
+            `;
+        
+            // Append the new parameter input div to the container
+            container.appendChild(paramInput);
+        
+            // Add an event listener to remove the parameter input div
+            paramInput.querySelector('.remove-param').addEventListener('click', () => {
+                container.removeChild(paramInput);
+            });
+        }
+        
+
+        document.getElementById('addField').addEventListener('click', () => {
+            const fieldBlock = document.createElement('div');
+            fieldBlock.className = 'field-block flex flex-col border-b-2 border-gray-200 pb-4 mb-4';
+            fieldBlock.innerHTML = `
+                <div class="flex justify-between items-center">
+                    <h2 class="text-lg font-semibold text-[#091057]">New Field</h2>
+                    <button type="button" class="remove-field text-red-600 hover:underline">Remove Field</button>
+                </div>
+                <input type="text" name="new_field_name" class="mt-2 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-[#133E87] transition duration-200" placeholder="Field Name">
+                <select name="new_field_type" class="mt-2 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-[#133E87] transition duration-200">
+                    <option value="AutoField">AutoField</option>
+                    <option value="DateTimeField">DateTimeField</option>
+                    <option value="ForeignKey">ForeignKey</option>
+                    <option value="TextField">TextField</option>
+                    <option value="CharField">CharField</option>
+                    <option value="PositiveSmallIntegerField">PositiveSmallIntegerField</option>
+                </select>
+                <div class="mt-4 parameters-container">
+                    <h3 class="font-semibold text-[#091057]">Parameters:</h3>
+                    <button type="button" class="add-param mt-2 text-blue-600 hover:underline">Add Parameter</button>
+                </div>
+            `;
+            fieldsContainer.appendChild(fieldBlock);
+
+            fieldBlock.querySelector('.add-param').addEventListener('click', (event) => {
+                addParameter(event.target.closest('.parameters-container'));
+            });
+
+            fieldBlock.querySelector('.remove-field').addEventListener('click', () => {
+                fieldsContainer.removeChild(fieldBlock);
+            });
+        });
+
+        document.querySelectorAll('.parameters-container .remove-param').forEach(removeButton => {
+            removeButton.addEventListener('click', (event) => {
+                const paramInput = event.target.closest('.flex.items-center');
+                paramInput.remove();
+            });
+        });
+
+        document.querySelectorAll('.add-param').forEach(button => {
+            button.addEventListener('click', (event) => {
+                addParameter(event.target.closest('.parameters-container'));
+            });
+        });
+
+        document.getElementById('editModelForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            const jsonData = {
+                "model_name": "{{ model_name }}",
+                "fields": {}
+            };
+        
+            const fieldNames = Array.from(new Set(
+                Array.from(formData.keys())
+                    .filter(key => !key.endsWith('_type') && !key.endsWith('_params[]') && !key.endsWith('_param_values[]') && !key.endsWith('_param_value_types[]'))
+                    .map(key => key.replace(/_params\[\]$/, '').replace(/_param_values\[\]$/, '').replace(/_param_value_types\[\]$/, ''))
+            ));
+        
+            fieldNames.forEach(fieldName => {
+                const fieldType = formData.get(`${fieldName}_type`);
+                if (fieldType) {
+                    jsonData["fields"][fieldName] = {
+                        "type": fieldType,
+                        "params": {}
+                    };
+                }
+        
+                const paramKeys = formData.getAll(`${fieldName}_params[]`);
+                const paramValues = formData.getAll(`${fieldName}_param_values[]`);
+                const paramTypes = formData.getAll(`${fieldName}_param_value_types[]`);
+        
+                paramKeys.forEach((param, index) => {
+                    jsonData["fields"][fieldName]["params"][param] = {
+                        "value": paramValues[index] || null,
+                        "value_type": paramTypes[index] || null
+                    };
+                });
+            });
+        
+            fetch('{% url "dynamic-model-list-create" %}?model_name={{model_name}}', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify(jsonData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '{% url "list_models" %}';
+                } else {
+                    console.error(data.error);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+        
+    });
+</script>
+
+<style>
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeIn { animation: fadeIn 0.3s ease-in-out; }
+</style>
+{% endblock %}

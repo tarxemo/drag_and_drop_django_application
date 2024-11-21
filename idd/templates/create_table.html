@@ -1,0 +1,24 @@
+<!-- create_table.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Table</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.0/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mx-auto mt-5">
+    <h1 class="text-2xl font-bold mb-4">Create Table</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-4">
+            {{ form.table_name.label_tag }}
+            {{ form.table_name }}
+        </div>
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Create Table</button>
+    </form>
+</div>
+</body>
+</html>
+

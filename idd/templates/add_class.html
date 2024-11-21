@@ -1,0 +1,80 @@
+{% extends 'base_template.html' %}
+
+{% block content %}
+<div class="mb-4">
+    <h2 class="text-2xl font-bold mb-4">Add Class</h2>
+    <!-- Manual Class Addition -->
+    <div class="bg-white shadow rounded-lg p-4 mb-4">
+        <h3 class="text-lg font-semibold mb-2">Manual Class Addition</h3>
+        <form id="manualClassForm" method="post" action="">
+            {% csrf_token %}
+            <input type="hidden" name="tag_id" value="{{ tag.id }}">
+            <label for="manualClassName" class="block mb-2">Enter class name:</label>
+            <input type="text" id="manualClassName" name="class_name" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded mt-2 hover:bg-blue-600 transition duration-300">Add Class</button>
+        </form>
+    </div>
+</div>
+
+<div class="bg-white shadow rounded-lg p-4">
+    <h1 class="text-2xl font-bold mb-4">Add Tailwind CSS Classes</h1>
+    <input type="hidden" id="tag-id" value="{{ tag.id }}">
+    <div class="mb-4">
+        <input type="text" id="class-description" placeholder="Enter class description" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <button id="predict-button" class="bg-green-500 text-white px-4 py-2 rounded mt-2 hover:bg-green-600 transition duration-300">Predict Classes</button>
+    </div>
+    
+    <div id="checkbox-container" class="mb-4">
+        <!-- Checkboxes will be added here dynamically -->
+    </div>
+    
+    <button id="submit-classes" class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 transition duration-300">Submit Selected Classes</button>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('#predict-button').click(function() {
+            let description = $('#class-description').val();
+            
+            $.ajax({
+                url: '/predict/',  // URL to your predict view
+                type: 'GET',
+                data: {
+                    'class_description': description
+                },
+                success: function(response) {
+                    let predictions = response.predictions;
+                    $('#checkbox-container').empty();  // Clear previous checkboxes
+
+                    predictions.forEach(function(className) {
+                        let checkbox = `<label class="block mb-2"><input type="checkbox" name="class_names" value="${className}" class="mr-2">${className}</label>`;
+                        $('#checkbox-container').append(checkbox);
+                    });
+                }
+            });
+        });
+
+        $('#submit-classes').click(function() {
+            let selectedClasses = [];
+            $('input[name="class_names"]:checked').each(function() {
+                selectedClasses.push($(this).val());
+            });
+            $.ajax({
+                url: `/template/{{ template.id }}/add-class/?tag_id={{ tag.id }}`,  // URL to your add_class view
+                type: 'POST',
+                data: JSON.stringify({
+                    'class_name': selectedClasses
+                }),
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
+                },
+                contentType: 'application/json',
+                success: function(response) {
+                    console.log(response);
+                    window.location.reload();
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold text-center text-[#091057] mb-6">Edit Model: <span class="text-[#133E87]">{{ model_name }}</span></h1>
+    <form id="editModelForm" class="bg-white rounded-lg shadow-lg p-8 animate-fadeIn">
+        {% csrf_token %}
+        <div class="space-y-6">
+            {% for field_name, field_info in model_details %}
+            <div class="flex flex-col">
+                <label class="text-lg font-semibold text-[#091057]" for="{{ field_name }}">{{ field_name }}</label>
+                
+                <input type="text" id="{{ field_name }}" name="{{ field_name }}" value="{{ field_name }}" class="mt-2 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-[#133E87] transition duration-200" placeholder="Field Name">
+                
+                <select id="{{ field_name }}_type" name="{{ field_name }}_type" class="mt-2 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-[#133E87] transition duration-200">
+                    <option value="AutoField" {% if field_info.type == 'AutoField' %}selected{% endif %}>AutoField</option>
+                    <option value="DateTimeField" {% if field_info.type == 'DateTimeField' %}selected{% endif %}>DateTimeField</option>
+                    <option value="ForeignKey" {% if field_info.type == 'ForeignKey' %}selected{% endif %}>ForeignKey</option>
+                    <option value="TextField" {% if field_info.type == 'TextField' %}selected{% endif %}>TextField</option>
+                    <option value="CharField" {% if field_info.type == 'CharField' %}selected{% endif %}>CharField</option>
+                    <option value="PositiveSmallIntegerField" {% if field_info.type == 'PositiveSmallIntegerField' %}selected{% endif %}>PositiveSmallIntegerField</option>
+                </select>
+                
+                <div class="mt-4">
+                    <h3 class="font-semibold text-[#091057]">Parameters:</h3>
+                    <div class="parameters-container">
+                        {% for param, value in field_info.params.items %}
+                        <div class="flex items-center space-x-2 mt-2">
+                            <input type="text" name="{{ field_name }}_params[]" value="{{ param }}" class="p-2 border border-gray-300 rounded-lg flex-1" placeholder="Parameter Name">
+                            <input type="text" name="{{ field_name }}_param_values[]" value="{{ value }}" class="p-2 border border-gray-300 rounded-lg flex-1" placeholder="Parameter Value">
+                            <button type="button" class="remove-param text-red-600 hover:underline">Remove</button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <button type="button" class="add-param mt-2 text-blue-600 hover:underline">Add Parameter</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="mt-8 text-center">
+            <button type="submit" class="px-6 py-3 bg-[#133E87] text-white font-semibold rounded-lg shadow-lg hover:bg-[#0a5b97] transition ease-in-out duration-300">
+                Update Model
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Add parameter functionality
+        document.querySelectorAll('.add-param').forEach(button => {
+            button.addEventListener('click', (event) => {
+                const parametersContainer = event.target.closest('.parameters-container');
+                const paramInput = document.createElement('div');
+                paramInput.className = 'flex items-center space-x-2 mt-2';
+                paramInput.innerHTML = `
+                    <input type="text" name="param_keys[]" class="p-2 border border-gray-300 rounded-lg flex-1" placeholder="Parameter Name">
+                    <input type="text" name="param_values[]" class="p-2 border border-gray-300 rounded-lg flex-1" placeholder="Parameter Value">
+                    <button type="button" class="remove-param text-red-600 hover:underline">Remove</button>
+                `;
+                parametersContainer.appendChild(paramInput);
+
+                // Add functionality to remove the parameter input
+                paramInput.querySelector('.remove-param').addEventListener('click', () => {
+                    parametersContainer.removeChild(paramInput);
+                });
+            });
+        });
+
+        // Handle form submission
+        document.getElementById('editModelForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            const jsonData = {
+                "csrfmiddlewaretoken": formData.get('csrfmiddlewaretoken'),
+                "fields": {}
+            };
+
+            const fieldNames = Array.from(formData.keys())
+                .filter(key => !key.endsWith('_type') && !key.endsWith('_params[]') && !key.endsWith('_param_values[]'))
+                .map(key => key.split('_')[0]);
+
+            fieldNames.forEach(fieldName => {
+                jsonData["fields"][fieldName] = {
+                    "type": formData.get(`${fieldName}_type`),
+                    "params": {}
+                };
+
+                // Fetch params and values for each field
+                const paramKeys = formData.getAll(`${fieldName}_params[]`);
+                const paramValues = formData.getAll(`${fieldName}_param_values[]`);
+                paramKeys.forEach((param, index) => {
+                    jsonData["fields"][fieldName]["params"][param] = paramValues[index] || null;
+                });
+            });
+
+            console.log(JSON.stringify(jsonData));
+
+            // Submit data via AJAX
+            fetch('{% url "dynamic-model-detail" model_name %}', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify(jsonData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Optionally redirect or show success message
+                    window.location.href = '{% url "list_models" %}';
+                } else {
+                    // Handle error messages
+                    console.error(data.error);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+</script>
+
+<style>
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeIn {
+    animation: fadeIn 0.5s ease-in-out;
+}
+</style>
+{% endblock %}
+

@@ -1,0 +1,19 @@
+{% extends 'base_template.html' %}
+
+{% block content %}
+<h2 class="text-xl font-bold mb-4">Add Child Tag</h2>
+<form id="childTagForm" method="post" action="" class="mb-4">
+    {% csrf_token %}
+    <input type="hidden" name="template_id" value="{{template.id}}" id="">
+    <input type="hidden" id="parentTagId" value="{{tag.id}}" name="parent_tag_id">
+    <div class="mb-2">
+        <label for="tagName" class="block text-sm font-medium text-gray-700">Tag Name</label>
+        <input type="text" id="tagName" name="tag_name" class="mt-1 p-2 w-full border rounded">
+    </div>
+    <div class="mb-2">
+        <label for="textContent" class="block text-sm font-medium text-gray-700">Text Content</label>
+        <textarea id="textContent" name="text_content" class="mt-1 p-2 w-full border rounded"></textarea>
+    </div>
+    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Save Child Tag</button>
+</form>
+{% endblock %}

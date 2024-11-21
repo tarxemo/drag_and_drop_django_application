@@ -1,0 +1,13 @@
+{% extends 'base_template.html' %}
+
+{% block content %}
+<div class="mb-4">
+    <h2 class="text-xl font-bold mb-4">Confirm Delete {{ type|title }}</h2>
+    <p>Are you sure you want to delete {{ object.name }}?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded mt-4">Delete</button>
+        <a href="{% url 'view_all_classes' template.id %}?tag_id={{ object.tag.id }}" class="bg-gray-500 text-white px-4 py-2 rounded mt-4">Cancel</a>
+    </form>
+</div>
+{% endblock %}

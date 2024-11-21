@@ -1,0 +1,31 @@
+{% extends 'base_template.html' %}
+
+{% block content %}
+<h2 class="text-xl font-bold mb-4">Edit Tag</h2>
+<form method="post" action="" class="mb-4" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="hidden" value="{{tag.id}}" id="tagId" name="tag_id">
+    <div class="mb-2">
+        <label for="tagName" class="block text-sm font-medium text-gray-700">Tag Name</label>
+        <input type="text" id="tagName" value="{{tag.tag_name}}" name="tag_name" class="mt-1 p-2 w-full border rounded">
+    </div>
+    <div class="mb-2">
+        <label for="textContent" class="block text-sm font-medium text-gray-700">Text Content</label>
+        <textarea id="textContent" name="text_content" class="mt-1 p-2 w-full border rounded">{{tag.text_content}}</textarea>
+    </div>
+    <div class="mb-2">
+        <label for="tagName" class="block text-sm font-medium text-gray-700">Tag Position</label>
+        <input type="text" id="tagName" value="{{tag.position}}" name="position" class="mt-1 p-2 w-full border rounded">
+    </div>
+    {% if tag.tag_name == "img" %}
+    <div class="mb-2">
+        <label for="image" class="block text-sm font-medium text-gray-700">Image</label>
+        {% if tag.image.image %}
+        <img src="{{ tag.image.image.url }}" width="100px" alt="">
+        {% endif %}
+        <input type="file" id="image" name="image" class="mt-1 p-2 w-full border rounded">
+    </div>
+    {% endif %}
+    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Save Tag</button>
+</form>
+{% endblock %}

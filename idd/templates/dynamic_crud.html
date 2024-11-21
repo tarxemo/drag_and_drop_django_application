@@ -1,0 +1,61 @@
+
+<!-- dynamic_crud.html -->
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic CRUD</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.0/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mx-auto mt-5">
+    <h1 class="text-2xl font-bold mb-4">CRUD Operations for {{ table.table_name }}</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Save</button>
+    </form>
+</div>
+</body>
+</html> -->
+<!-- dynamic_crud.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic CRUD</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.0/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mx-auto mt-5">
+    <h1 class="text-2xl font-bold mb-4">CRUD Operations for {{ table.table_name }}</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Save</button>
+    </form>
+    <hr class="my-4">
+    <h2 class="text-xl font-bold mb-4">Existing Records</h2>
+    <table class="table-auto w-full">
+        <thead>
+            <tr>
+                {% for field in form %}
+                <th class="px-4 py-2">{{ field.label }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for obj in objects %}
+            <tr>
+                {% for field in form %}
+                <td class="border px-4 py-2">{{ getattr(obj, field.name) }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

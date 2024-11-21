@@ -1,0 +1,19 @@
+{% extends 'base_template.html' %}
+
+{% block content %}
+<div class="mb-4">
+    <h2 class="text-xl font-bold mb-4">Edit Attribute</h2>
+    <form method="post" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        {% csrf_token %}
+        <div class="mb-4">
+            <label for="attribute_name" class="block text-gray-700 text-sm font-bold mb-2">Attribute Name</label>
+            <input type="text" id="attribute_name" name="attribute_name" value="{{ attribute.attribute_name }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+        </div>
+        <div class="mb-4">
+            <label for="attribute_value" class="block text-gray-700 text-sm font-bold mb-2">Attribute Value</label>
+            <input type="text" id="attribute_value" name="attribute_value" value="{{ attribute.attribute_value }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+        </div>
+        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Save Changes</button>
+    </form>
+</div>
+{% endblock %}

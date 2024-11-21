@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ template.name }}</title>
+    <script type="module" src="{% static 'js/main.js' %}"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.0/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .highlight {
+            background-color: yellow;
+        }
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 60px;
+            background-color: #2d3748;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+        }
+        .sidebar a {
+            margin-bottom: 20px;
+            color: white;
+            font-size: 24px;
+            text-align: center;
+            position: relative;
+        }
+        .sidebar a:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #2d3748;
+            color: white;
+            padding: 5px;
+            border-radius: 4px;
+            white-space: nowrap;
+            margin-left: 10px;
+        }
+        .draggable {
+            cursor: grab;
+        }
+        .droppable {
+            border: 2px dashed #4a5568;
+            padding: 10px;
+            min-height: 100px;
+        }
+        .tag-list {
+            position: fixed;
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 200px;
+            background-color: #edf2f7;
+            padding: 10px;
+            overflow-y: auto;
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+        .tag-item {
+            background-color: #f7fafc;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 10px;
+            padding: 5px;
+            text-align: center;
+            cursor: grab;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar with Navigation -->
+    <div class="sidebar">
+        <a href="{% url 'template_list' %}" data-tooltip="Home"><i class="fas fa-home"></i></a>
+        <!-- Other sidebar links... -->
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto mt-5 ml-20">
+        <div class="flex">
+            <!-- Left Panel for Navigation and Content -->
+            <div class="w-1/2 p-4 border-r"> 
+                {% block content %}
+                {% endblock %}
+            </div>
+
+            <!-- Right Panel for Displaying Template -->
+            <div class="w-1/2 p-4 border-l">
+                <h2 class="text-xl font-bold mb-4">Template Preview</h2>
+                <div id="templatePreview" class="border p-4 droppable">
+                    {{ html_structure|safe }}
+                </div>
+                <button id="editSelectedPart" class="bg-blue-500 text-white px-4 py-2 rounded mt-4">Edit Selected Part</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tag List for Dragging -->
+    <div class="tag-list">
+        <h3 class="font-bold text-center mb-4">Available Tags</h3>
+        <div id="tag-p" class="tag-item draggable" draggable="true">p</div>
+        <div id="tag-h1" class="tag-item draggable" draggable="true">h1</div>
+        <div id="tag-button" class="tag-item draggable" draggable="true">button</div>
+    </div>
+
+    <!-- Drag and Drop Script -->
+    <script>
+        let draggedElement = null;
+        let currentParent = null;
+        let currentIndex = null;
+        
+        // Add dragstart event for tag items (ready-made list items)
+        document.querySelectorAll('.draggable').forEach(function(tag) {
+            tag.addEventListener('dragstart', function(e) {
+                draggedElement = e.target.id; // Get the ID of the dragged tag from the list
+                e.dataTransfer.setData('text/plain', draggedElement);
+            });
+        });
+    
+        // Make HTML components inside the template preview draggable
+        document.querySelectorAll('#templatePreview *').forEach(function(element) {
+            element.setAttribute('draggable', true); // Enable draggable attribute on all child elements
+            element.addEventListener('dragstart', function(e) {
+                draggedElement = e.target; // Store reference to the dragged HTML component
+                currentParent = draggedElement.parentElement; // Store reference to the parent of the dragged element
+                currentIndex = Array.from(currentParent.children).indexOf(draggedElement); // Store the initial position
+                e.dataTransfer.setData('text/plain', draggedElement.id); // Set the data transfer
+            });
+        });
+    
+        // Enable dropping in template preview
+        let dropzone = document.getElementById('templatePreview');
+    
+        dropzone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+        });
+    
+        dropzone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            
+            if (draggedElement) {
+                // Determine the exact drop target
+                let dropTarget = document.elementFromPoint(e.clientX, e.clientY);
+                let parentTag = getValidParent(dropTarget);
+    
+                if (parentTag) {
+                    if (typeof draggedElement === 'string') {
+                        // Case: New tag dragged from the ready-made list
+                        let newTag = document.createElement(draggedElement.replace('tag-', '')); // Convert 'tag-p' -> 'p'
+                        newTag.textContent = "New " + draggedElement.replace('tag-', ''); // Set some placeholder content
+                        parentTag.appendChild(newTag); // Append the new tag to the selected parent
+    
+                        // Send AJAX request to save the new tag to the database
+                        let parentTagId = parentTag.getAttribute('data-id') || parentTag.getAttribute('id');
+                        saveNewTagToDatabase(newTag.tagName.toLowerCase(), parentTagId);
+                    } else {
+                        // Case: Existing HTML component dragged within the template
+                        let newParent = parentTag; // New parent tag
+                        let newIndex = Array.from(newParent.children).indexOf(dropTarget); // New position within the parent
+                        
+                        if (newParent === currentParent && newIndex !== currentIndex) {
+                            // Same parent, but position changed
+                            updatePositionsInSameParent(draggedElement, currentParent, currentIndex, newIndex);
+                        } else {
+                            // Different parent
+                            newParent.appendChild(draggedElement); // Move the dragged element to the new parent
+    
+                            // Update the parent ID in the database for the moved component
+                            let draggedElementId = draggedElement.getAttribute('data-id') || draggedElement.getAttribute('id');
+                            let parentTagId = newParent.getAttribute('data-id') || newParent.getAttribute('id');
+                            updateParentTagInDatabase(draggedElementId, parentTagId);
+                        }
+                    }
+                }
+            }
+        });
+    
+        // Function to save new tag to the database (from ready-made list)
+        function saveNewTagToDatabase(tagName, parentId) {
+            $.ajax({
+                url: '{% url "add_new_tag" %}', // URL for saving the new tag
+                type: 'POST',
+                data: {
+                    'tag_name': tagName,
+                    'parent_tag_id': parentId,
+                    'template_id': '{{ template.id }}', // Pass the current template ID
+                    'csrfmiddlewaretoken': '{{ csrf_token }}' // CSRF token for Django
+                },
+                success: function(response) {
+                    alert('New tag saved successfully!');
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error saving new tag:', error);
+                }
+            });
+        }
+    
+        // Function to update parent tag in the database (for moved components)
+        function updateParentTagInDatabase(elementId, newParentId) {
+            $.ajax({
+                url: '{% url "update_parent_tag" %}', // URL for updating parent tag
+                type: 'POST',
+                data: {
+                    'element_id': elementId,
+                    'new_parent_id': newParentId,
+                    'template_id': '{{ template.id }}', // Pass the current template ID
+                    'csrfmiddlewaretoken': '{{ csrf_token }}' // CSRF token for Django
+                },
+                success: function(response) {
+                    alert('Element moved successfully!');
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error moving element:', error);
+                }
+            });
+        }
+    
+        // Function to update the positions of sibling elements in the same parent
+        function updatePositionsInSameParent(draggedElement, parentElement, oldIndex, newIndex) {
+            // Move the dragged element to the new position in the DOM
+            if (newIndex < oldIndex) {
+                parentElement.insertBefore(draggedElement, parentElement.children[newIndex]);
+            } else {
+                parentElement.insertBefore(draggedElement, parentElement.children[newIndex + 1]);
+            }
+    
+            // Prepare the data to update the positions in the backend
+            let siblingElements = Array.from(parentElement.children);
+            let positionsData = siblingElements.map(function(child, index) {
+                return {
+                    element_id: child.getAttribute('data-id') || child.getAttribute('id'),
+                    position: index
+                };
+            });
+    
+            // Send AJAX request to update positions
+            $.ajax({
+                url: '{% url "update_positions" %}', // URL for updating positions
+                type: 'POST',
+                data: {
+                    'positions': JSON.stringify(positionsData),
+                    'parent_id': parentElement.getAttribute('data-id') || parentElement.getAttribute('id'),
+                    'template_id': '{{ template.id }}', // Pass the current template ID
+                    'csrfmiddlewaretoken': '{{ csrf_token }}' // CSRF token for Django
+                },
+                success: function(response) {
+                    alert('Positions updated successfully!');
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error updating positions:', error);
+                }
+            });
+        }
+    
+        // Function to find the valid parent for the drop event
+        function getValidParent(dropTarget) {
+            // If the dropTarget is a text node, get its parent element
+            if (dropTarget.nodeType === Node.TEXT_NODE) {
+                dropTarget = dropTarget.parentElement;
+            }
+    
+            // Return the parent element (or the drop target itself if it’s already a valid drop target)
+            return dropTarget;
+        }
+    </script>
+    
+    
+    
+    
+</body>
+</html>

@@ -1,0 +1,15 @@
+{% extends 'base_template.html' %}
+
+{% block content %}
+<div class="mb-4">
+    <h2 class="text-xl font-bold mb-4">Edit Class</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-4">
+            <label for="class_name" class="block text-gray-700">Class Name</label>
+            <input type="text" id="class_name" name="class_name" value="{{ class_instance.class_name }}" class="w-full p-2 border rounded" required>
+        </div>
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded mt-4">Save</button>
+    </form>
+</div>
+{% endblock %}
