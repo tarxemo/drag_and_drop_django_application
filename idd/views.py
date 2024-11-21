@@ -8,7 +8,7 @@ from .utils import *
 from .form_utils import *
 from .templates_utils import *
 from django.shortcuts import render, redirect, get_object_or_404
-# import joblib
+import joblib
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import FileSystemStorage
 from .models_utils import *
@@ -193,8 +193,8 @@ def delete_class(request, tag_id, class_name):
     return JsonResponse({'status': 'success'})
 
 
-# file_path = 'idd/model_data.joblib'
-# model_data = joblib.load(file_path)
+file_path = 'idd/model_data.joblib'
+model_data = joblib.load(file_path)
 
 def get_predictions(input_text):
     return predict_classes(input_text, model_data['model'], model_data['vectorizer'], model_data['class_map'], decode_list)[0]
