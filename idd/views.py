@@ -125,7 +125,7 @@ def edit_tag(request, template_id):
         tag.save()
     tag_id = request.GET.get('tag_id')
     tag = get_object_or_404(Tag, id=tag_id)
-    html_structure = generate_template(tag.template.id)
+    html_structure = generate_template_by_id(tag.template.id)
     context={
         'tag':tag,
         'template': Template.objects.get(id=template_id),
@@ -155,7 +155,7 @@ def add_class(request, template_id):
             class_names = data.get("class_name", [])
         except:
             class_names = request.POST.getlist("class_name")            
-        html_structure = generate_template(tag.template.id)
+        html_structure = generate_template_by_id(tag.template.id)
         print(class_names)  # For debugging
         
         for class_name in class_names:
@@ -163,7 +163,7 @@ def add_class(request, template_id):
     
     tag_id = request.GET.get('tag_id')
     tag = get_object_or_404(Tag, id=tag_id)
-    html_structure = generate_template(tag.template.id)
+    html_structure = generate_template_by_id(tag.template.id)
     context = {
         'tag': tag,
         'template': get_object_or_404(Template, id=template_id),
@@ -224,7 +224,7 @@ def add_child_tag(request, template_id):
         )
     tag_id = request.GET.get('tag_id')
     tag = get_object_or_404(Tag, id=tag_id)
-    html_structure = generate_template(tag.template.id)
+    html_structure = generate_template_by_id(tag.template.id)
     context = {
         'tag': tag,
         'template': get_object_or_404(Template, id=template_id),
@@ -250,7 +250,7 @@ def view_all_children(request, template_id):
         'template': template,
         'tag': parent_tag,
         'children_tags': children_tags,
-        'html_structure' : generate_template(template.id),
+        'html_structure' : generate_template_by_id(template.id),
     })
 
 def view_all_attributes(request, template_id):
@@ -263,39 +263,40 @@ def view_all_attributes(request, template_id):
         'template': template,
         'tag': tag,
         'attributes': attributes,
-        'html_structure' : generate_template(template.id),
+        'html_structure' : generate_template_by_id(template.id),
     })
 
 def view_all_classes(request, template_id):
     tag_id = request.GET.get('tag_id')
     template = get_object_or_404(Template, id=template_id)
     tag = get_object_or_404(Tag, id=tag_id)
-    classes = Class.objects.filter(tag=tag)
+    classes = TagClass.objects.filter(tag=tag)
     
     return render(request, 'view_all_classes.html', {
         'template': template,
         'tag': tag,
         'classes': classes,
-        'html_structure' : generate_template(template.id),
+        'html_structure' : generate_template_by_id(template.id),
     })
 
 def edit_class(request, template_id):
     class_id = request.GET.get('class_id')
     template = get_object_or_404(Template, id=template_id)
-    class_instance = get_object_or_404(Class, id=class_id)
+    class_instance = get_object_or_404(TagClass, id=class_id).class_name
+    tag = get_object_or_404(TagClass, id=class_id).tag
 
     if request.method == 'POST':
         class_name = request.POST.get('class_name')
         class_instance.class_name = class_name
         class_instance.save()
-        url = f"/template/{template_id}/view-all-classes/?tag_id={class_instance.tag.id}"
+        url = f"/template/{template_id}/view-all-classes/?tag_id={tag.id}"
         return redirect(url)
     
     return render(request, 'edit_class.html', {
         'template': template,
-        'tag': class_instance.tag,
+        'tag': tag,
         'class_instance': class_instance,
-        'html_structure' : generate_template(template.id),
+        'html_structure' : generate_template_by_id(template.id),
     })
 
 def delete_class(request, template_id):
@@ -325,7 +326,7 @@ def add_attribute(request, template_id):
     return render(request, 'add_attribute.html', {
         'template': template,
         'tag': tag,
-        'html_structure' : generate_template(template.id),
+        'html_structure' : generate_template_by_id(template.id),
     })
 
 
@@ -346,7 +347,7 @@ def edit_attribute(request, template_id):
         'template': template,
         'attribute': attribute,
         'tag': attribute.tag,
-        'html_structure' : generate_template(template.id),
+        'html_structure' : generate_template_by_id(template.id),
     })
 
 @csrf_exempt

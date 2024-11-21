@@ -30,6 +30,8 @@ urlpatterns = [
     path('template/<int:template_id>/delete_tag/', delete_tag, name='delete_tag'),
     path('upload_html/', upload_html, name='upload_html'),
     
+    path('predict/', predict_view, name="predict"),
+    
     path('change_parent_tag/', change_parent_tag, name='save_tag_position'),
     path('add_new_tag/', add_new_tag, name="add_new_tag"),
     path('update_parent_tag/', update_parent_tag, name='update_parent_tag'),

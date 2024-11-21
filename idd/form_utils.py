@@ -26,7 +26,7 @@ def generate_add_view_html(table_name):
 
     # Start building the HTML form
     html_form = '''
-    <form method="POST" action="" class="max-w-md mx-auto bg-[#003161] p-6 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg mt-10 space-y-4">
+    <form method="POST" action="" class="max-w-md mx-auto bg-[#003161] p-6 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg mt-10 space-y-4 text-white">
         {% csrf_token %}
     '''
 
@@ -40,49 +40,59 @@ def generate_add_view_html(table_name):
             if field.get_internal_type() in ['CharField', 'TextField']:
                 html_form += f'''
                 <div>
-                    <label for="{field_name}" class="block  font-semibold">{field_label}</label>
-                    <input type="text" id="{field_name}" name="{field_name}" class="form-input block w-full p-2 mt-1 rounded-md focus:ring-2 focus:ring-[#000B58] focus:outline-none transition duration-200 ease-in-out transform hover:scale-105" required>
+                    <label for="{field_name}" class="block font-semibold text-gray-200">{field_label}</label>
+                    <input type="text" id="{field_name}" name="{field_name}" 
+                           class="form-input block w-full p-2 mt-1 bg-gray-100 text-gray-900 rounded-md border border-gray-300 focus:ring-2 focus:ring-[#000B58] focus:border-[#000B58] focus:outline-none transition duration-200 ease-in-out transform hover:scale-105" 
+                           placeholder="Enter {field_label}" required>
                 </div>
                 '''
             elif field.get_internal_type() == 'IntegerField':
                 html_form += f'''
                 <div>
-                    <label for="{field_name}" class="block  font-semibold">{field_label}</label>
-                    <input type="number" id="{field_name}" name="{field_name}" class="form-input block w-full p-2 mt-1 rounded-md focus:ring-2 focus:ring-[#000B58] focus:outline-none transition duration-200 ease-in-out transform hover:scale-105" required>
+                    <label for="{field_name}" class="block font-semibold text-gray-200">{field_label}</label>
+                    <input type="number" id="{field_name}" name="{field_name}" 
+                           class="form-input block w-full p-2 mt-1 bg-gray-100 text-gray-900 rounded-md border border-gray-300 focus:ring-2 focus:ring-[#000B58] focus:border-[#000B58] focus:outline-none transition duration-200 ease-in-out transform hover:scale-105" 
+                           placeholder="Enter {field_label}" required>
                 </div>
                 '''
             elif field.get_internal_type() == 'BooleanField':
                 html_form += f'''
                 <div class="flex items-center">
-                    <input type="checkbox" id="{field_name}" name="{field_name}" class="form-checkbox text-[#000B58] focus:ring-2 focus:ring-[#000B58] transition duration-200 ease-in-out transform hover:scale-105">
-                    <label for="{field_name}" class="ml-2  font-semibold">{field_label}</label>
+                    <input type="checkbox" id="{field_name}" name="{field_name}" 
+                           class="form-checkbox text-[#000B58] focus:ring-2 focus:ring-[#000B58] transition duration-200 ease-in-out transform hover:scale-105">
+                    <label for="{field_name}" class="ml-2 font-semibold text-gray-200">{field_label}</label>
                 </div>
                 '''
             elif field.get_internal_type() == 'DateField':
                 html_form += f'''
                 <div>
-                    <label for="{field_name}" class="block  font-semibold">{field_label}</label>
-                    <input type="date" id="{field_name}" name="{field_name}" class="form-input block w-full p-2 mt-1 rounded-md focus:ring-2 focus:ring-[#000B58] focus:outline-none transition duration-200 ease-in-out transform hover:scale-105" required>
+                    <label for="{field_name}" class="block font-semibold text-gray-200">{field_label}</label>
+                    <input type="date" id="{field_name}" name="{field_name}" 
+                           class="form-input block w-full p-2 mt-1 bg-gray-100 text-gray-900 rounded-md border border-gray-300 focus:ring-2 focus:ring-[#000B58] focus:border-[#000B58] focus:outline-none transition duration-200 ease-in-out transform hover:scale-105" 
+                           required>
                 </div>
                 '''
             # Add more field types as necessary
             else:
                 html_form += f'''
                 <div>
-                    <label for="{field_name}" class="block  font-semibold">{field_label}</label>
-                    <input type="text" id="{field_name}" name="{field_name}" class="form-input block w-full p-2 mt-1 rounded-md focus:ring-2 focus:ring-[#000B58] focus:outline-none transition duration-200 ease-in-out transform hover:scale-105" required>
+                    <label for="{field_name}" class="block font-semibold text-gray-200">{field_label}</label>
+                    <input type="text" id="{field_name}" name="{field_name}" 
+                           class="form-input block w-full p-2 mt-1 bg-gray-100 text-gray-900 rounded-md border border-gray-300 focus:ring-2 focus:ring-[#000B58] focus:border-[#000B58] focus:outline-none transition duration-200 ease-in-out transform hover:scale-105" 
+                           placeholder="Enter {field_label}" required>
                 </div>
                 '''
 
     # Add the submit button
     html_form += '''
-        <button type="submit" class="w-full bg-[#000B58]  font-semibold py-2 px-4 rounded-md hover:bg-[#003161] transition-all duration-300 ease-in-out transform hover:scale-105">
+        <button type="submit" class="w-full bg-[#000B58] font-semibold py-2 px-4 text-white rounded-md hover:bg-[#003161] transition-all duration-300 ease-in-out transform hover:scale-105">
             Submit
         </button>
     </form>
     '''
 
     return html_form
+
 
 
 from django.utils.html import escape
