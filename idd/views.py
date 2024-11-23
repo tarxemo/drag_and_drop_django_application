@@ -159,7 +159,8 @@ def add_class(request, template_id):
         print(class_names)  # For debugging
         
         for class_name in class_names:
-            Class.objects.create(class_name=class_name, tag=tag)
+            classes, created=Class.objects.get_or_create(class_name=class_name)
+            classes.save()
     
     tag_id = request.GET.get('tag_id')
     tag = get_object_or_404(Tag, id=tag_id)
@@ -216,11 +217,13 @@ def add_child_tag(request, template_id):
         text_content = request.POST.get("text_content")
         parent_tag = Tag.objects.get(id=parent_tag_id)
         template = Template.objects.get(id = template_id)
-        Tag.objects.create(
-            tag_name=tag_name, 
-            parent_tag=parent_tag, 
-            template=template, 
-            text_content=text_content
+        tag = Tag.objects.create(
+            template=template,
+            parent_tag=parent_tag,
+            tag_name=tag_name,
+            text_content=text_content,
+            # django_tag_type=tag_type,
+            position=len(parent_tag.children.all()) if parent_tag else len(Tag.objects.filter(template=template, parent_tag=None))
         )
     tag_id = request.GET.get('tag_id')
     tag = get_object_or_404(Tag, id=tag_id)
@@ -614,3 +617,16 @@ def generate_django_project(request):
             return response
     else:
         return render(request, 'project_generator_form.html')
+    
+
+def templates_gallery(request):
+    templates = Template.objects.all()
+    templates_with_html = [
+        {
+            'id': template.id,
+            'name': template.name,
+            'html': generate_template_by_id(template.id)
+        }
+        for template in templates
+    ]
+    return render(request, 'templates_gallery.html', {'templates': templates_with_html})
