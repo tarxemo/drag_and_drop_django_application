@@ -53,10 +53,10 @@
 
                 <!-- Action Buttons -->
                 <div class="absolute top-2 right-2 flex gap-2">
-                    <a href="#" class="text-[var(--primary-dark)] hover:text-[var(--primary-light)]">
+                    <a href="{% url 'one_template_detail' template.id%}" class="text-[var(--primary-dark)] hover:text-[var(--primary-light)]">
                         <i class="fas fa-eye"></i>
                     </a>
-                    <a href="#" class="text-[var(--primary-dark)] hover:text-[var(--primary-light)]">
+                    <a href="{% url 'download_html' template.id %}" class="text-[var(--primary-dark)] hover:text-[var(--primary-light)]">
                         <i class="fas fa-download"></i>
                     </a>
                 </div>

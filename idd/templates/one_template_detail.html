@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ template.name }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-dark: #000B58;
+            --primary-light: #FFE31A;
+        }
+        .hover-shadow {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .hover-shadow:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <header class="bg-[var(--primary-dark)] text-white py-6 shadow-lg">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold">{{ template.name }}</h1>
+            <a href="{% url 'templates_gallery' %}" class="text-[var(--primary-light)] hover:underline">
+                <i class="fas fa-arrow-left"></i> Back to Gallery
+            </a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-10">
+        <!-- Template HTML -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-bold text-[var(--primary-dark)] mb-4">{{ template.name }}</h2>
+            <div class="border border-gray-300 rounded-md p-4 bg-gray-50">
+                <iframe srcdoc="{{ html_code }}" class="w-full h-screen"></iframe>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-4">
+        <div class="container mx-auto px-4">
+            <p class="text-center">&copy; 2024 Templates Gallery. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
