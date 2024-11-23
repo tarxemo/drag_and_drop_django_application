@@ -613,3 +613,28 @@ def generate_django_project(request):
             return response
     else:
         return render(request, 'project_generator_form.html')
+    
+    
+@csrf_exempt
+def template_repository(request):
+    # Retrieve all applications
+    applications = Application.objects.all()
+
+    # Retrieve all templates
+    templates = Template.objects.all()
+
+    # Retrieve all tags
+    tags = Tag.objects.all()
+
+    # Retrieve all images (if applicable)
+    images = Image.objects.all()
+
+    # Pass the retrieved data to the template
+    context = {
+        'applications': applications,
+        'templates': templates,
+        'tags': tags,
+        'images': images
+    }
+
+    return render(request, 'templates_repo.html', context)

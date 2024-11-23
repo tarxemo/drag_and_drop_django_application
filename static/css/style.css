@@ -1,0 +1,197 @@
+
+
+:root {
+    --background: #2C2C2C;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;  
+}
+
+body {
+    background: var(--background);
+    display: grid;
+    height: 100vh;
+    margin: 0;
+    font-size: 16px;
+    font-family: 'Red Hat Display', 
+        sans-serif;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    width: 100%;
+} 
+  
+.profile-wrapper {
+    width: 22rem;
+    height: 28rem;
+    margin-bottom: 3rem;
+}
+
+.profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    width: 22rem;
+    height: 28rem;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.6);
+    cursor: pointer;
+    transition: 0.5s;
+}
+ 
+.profile .profile-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    background: var(--background);
+    transition: .5s;
+}
+
+.profile-image img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+.profile:hover img {
+    opacity: 0.4;
+    transition: .5s;
+}
+
+.profile:hover .profile-image {
+    transform: translateY(-104px);
+    transition: all .9s;
+}
+
+.profile:hover .profile-bio {
+    opacity: 0.9; 
+}
+
+.social-icons {
+    position: absolute;
+    display: flex;
+    gap: 0.75rem;
+    z-index: 3;
+    bottom: 10.125rem;
+}
+  
+.social-icons li {
+    list-style: none;
+}
+
+.social-icons li a {
+    position: relative;
+    display: block;
+    display: grid;
+    place-items: center;
+    background: #fff;
+    font-size: 23px;
+    font-weight: bold;
+    width: 4.4rem;
+    height: 2.6rem;
+    border: 2px solid #CDCDCD;
+    border-radius: 0.5rem;
+    transition: .2s;
+    transform: translateY(2rem);
+    opacity: 0;
+}
+
+.social-icons li a:hover {
+    background: var(--background);
+    transition: .2s;
+}
+
+.social-icons li a svg {
+    color: var(--background);
+    transition: .2s;
+}
+
+.social-icons li a:hover svg {
+    color: white;
+    transition: 0.8s;
+    transform: rotateY(360deg);
+}
+
+.profile:hover .social-icons li a {
+    opacity: 1; 
+}
+
+.profile:hover li:nth-child(1) a {
+    transition-delay: 0.1s;
+}
+
+.profile:hover li:nth-child(2) a {
+    transition-delay: 0.2s;
+}
+
+.profile:hover li:nth-child(3) a {
+    transition-delay: 0.3s;
+}
+
+.profile:hover li:nth-child(4) a {
+    transition-delay: 0.4s;
+}
+
+.profile-name {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 4;
+    width: 100%;
+    height: 6.5rem;
+    padding: 0.75rem 0.875rem;
+    z-index: 1;
+    color: #333;
+    background-color: #fff;
+    text-align: left;
+}
+
+.profile:hover .profile-name {
+    background-color: #fff;
+}
+
+.profile-name h2 {
+    margin-bottom: 0.5rem;
+}
+
+.button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #4d5358;
+    border: none;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+.button:active {
+    background-color: #004080;
+    transform: translateY(1px);
+}
+
+.button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
+}

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Profile Cards</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@500&display=swap"
+            rel="stylesheet"
+        >
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body> 
+
+        <div class="container">       
+            <div class="profile-wrapper">
+                <div class="profile">
+                    <div class="profile-image">
+                        <img
+                            src="{{ image.image.url }}"
+                            alt="Profile"
+                        >
+                    </div>
+                    <ul class="social-icons">
+                        <li>
+                            <a href="#like" title="like">
+                                <button class="button" >like</button>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#preview" title="preview">
+                                <button class="button" >View</button>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="profile-name">
+                        {% for application in applications%}
+                        
+                        <h2>{{ application.owner.username }}</h2>
+                        <div class="profile-bio">
+                            I'm a JavaScript full-stack engineer, 
+                            love working with <em>React</em> and <em>Node.js</em>.
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </body>
+</html>
