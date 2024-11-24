@@ -51,7 +51,7 @@ def delete_template(request, template_id):
 
 def template_detail(request, template_id):
     template = get_object_or_404(Template, id=template_id)
-    html_structure = generate_template(template_id)
+    html_structure = generate_template_by_id(template_id)
     csrf_token = get_token(request)
     return render(request, 'template_detail.html', {
         'template': template,
@@ -125,7 +125,7 @@ def edit_tag(request, template_id):
         tag.save()
     tag_id = request.GET.get('tag_id')
     tag = get_object_or_404(Tag, id=tag_id)
-    html_structure = generate_template(tag.template.id)
+    html_structure = generate_template_by_id(tag.template.id)
     context={
         'tag':tag,
         'template': Template.objects.get(id=template_id),
@@ -155,15 +155,16 @@ def add_class(request, template_id):
             class_names = data.get("class_name", [])
         except:
             class_names = request.POST.getlist("class_name")            
-        html_structure = generate_template(tag.template.id)
+        html_structure = generate_template_by_id(tag.template.id)
         print(class_names)  # For debugging
         
         for class_name in class_names:
-            Class.objects.create(class_name=class_name, tag=tag)
+            classes, created=Class.objects.get_or_create(class_name=class_name)
+            classes.save()
     
     tag_id = request.GET.get('tag_id')
     tag = get_object_or_404(Tag, id=tag_id)
-    html_structure = generate_template(tag.template.id)
+    html_structure = generate_template_by_id(tag.template.id)
     context = {
         'tag': tag,
         'template': get_object_or_404(Template, id=template_id),
@@ -216,15 +217,17 @@ def add_child_tag(request, template_id):
         text_content = request.POST.get("text_content")
         parent_tag = Tag.objects.get(id=parent_tag_id)
         template = Template.objects.get(id = template_id)
-        Tag.objects.create(
-            tag_name=tag_name, 
-            parent_tag=parent_tag, 
-            template=template, 
-            text_content=text_content
+        tag = Tag.objects.create(
+            template=template,
+            parent_tag=parent_tag,
+            tag_name=tag_name,
+            text_content=text_content,
+            # django_tag_type=tag_type,
+            position=len(parent_tag.children.all()) if parent_tag else len(Tag.objects.filter(template=template, parent_tag=None))
         )
     tag_id = request.GET.get('tag_id')
     tag = get_object_or_404(Tag, id=tag_id)
-    html_structure = generate_template(tag.template.id)
+    html_structure = generate_template_by_id(tag.template.id)
     context = {
         'tag': tag,
         'template': get_object_or_404(Template, id=template_id),
@@ -250,7 +253,7 @@ def view_all_children(request, template_id):
         'template': template,
         'tag': parent_tag,
         'children_tags': children_tags,
-        'html_structure' : generate_template(template.id),
+        'html_structure' : generate_template_by_id(template.id),
     })
 
 def view_all_attributes(request, template_id):
@@ -263,39 +266,40 @@ def view_all_attributes(request, template_id):
         'template': template,
         'tag': tag,
         'attributes': attributes,
-        'html_structure' : generate_template(template.id),
+        'html_structure' : generate_template_by_id(template.id),
     })
 
 def view_all_classes(request, template_id):
     tag_id = request.GET.get('tag_id')
     template = get_object_or_404(Template, id=template_id)
     tag = get_object_or_404(Tag, id=tag_id)
-    classes = Class.objects.filter(tag=tag)
+    classes = TagClass.objects.filter(tag=tag)
     
     return render(request, 'view_all_classes.html', {
         'template': template,
         'tag': tag,
         'classes': classes,
-        'html_structure' : generate_template(template.id),
+        'html_structure' : generate_template_by_id(template.id),
     })
 
 def edit_class(request, template_id):
     class_id = request.GET.get('class_id')
     template = get_object_or_404(Template, id=template_id)
-    class_instance = get_object_or_404(Class, id=class_id)
+    class_instance = get_object_or_404(TagClass, id=class_id).class_name
+    tag = get_object_or_404(TagClass, id=class_id).tag
 
     if request.method == 'POST':
         class_name = request.POST.get('class_name')
         class_instance.class_name = class_name
         class_instance.save()
-        url = f"/template/{template_id}/view-all-classes/?tag_id={class_instance.tag.id}"
+        url = f"/template/{template_id}/view-all-classes/?tag_id={tag.id}"
         return redirect(url)
     
     return render(request, 'edit_class.html', {
         'template': template,
-        'tag': class_instance.tag,
+        'tag': tag,
         'class_instance': class_instance,
-        'html_structure' : generate_template(template.id),
+        'html_structure' : generate_template_by_id(template.id),
     })
 
 def delete_class(request, template_id):
@@ -325,7 +329,7 @@ def add_attribute(request, template_id):
     return render(request, 'add_attribute.html', {
         'template': template,
         'tag': tag,
-        'html_structure' : generate_template(template.id),
+        'html_structure' : generate_template_by_id(template.id),
     })
 
 
@@ -346,7 +350,7 @@ def edit_attribute(request, template_id):
         'template': template,
         'attribute': attribute,
         'tag': attribute.tag,
-        'html_structure' : generate_template(template.id),
+        'html_structure' : generate_template_by_id(template.id),
     })
 
 @csrf_exempt
@@ -614,27 +618,101 @@ def generate_django_project(request):
     else:
         return render(request, 'project_generator_form.html')
     
-    
-@csrf_exempt
-def template_repository(request):
-    # Retrieve all applications
-    applications = Application.objects.all()
 
-    # Retrieve all templates
+def templates_gallery(request):
     templates = Template.objects.all()
+    parent_id = request.GET.get('parent_id')
+    templates_with_html = [
+        {
+            'id': template.id,
+            'name': template.name,
+            'html': generate_template_by_id(template.id)
+        }
+        for template in templates
+    ]
+    return render(request, 'templates_gallery.html', {'templates': templates_with_html, 'parent_id':parent_id})
 
-    # Retrieve all tags
-    tags = Tag.objects.all()
 
-    # Retrieve all images (if applicable)
-    images = Image.objects.all()
+def one_template_detail(request, template_id):
+    template = get_object_or_404(Template, id=template_id)
+    html_code = generate_template_by_id(template_id)
+    return render(request, 'one_template_detail.html', {'template': template, 'html_code': html_code})
 
-    # Pass the retrieved data to the template
-    context = {
-        'applications': applications,
-        'templates': templates,
-        'tags': tags,
-        'images': images
-    }
 
-    return render(request, 'templates_repo.html', context)
+import os
+import zipfile
+import subprocess
+from django.http import HttpResponse
+from django.conf import settings
+from io import BytesIO
+
+def create_django_project(request, project_name="my_project", app_name="new_app"):
+    # Define the project folder path
+    project_dir = os.path.join(settings.BASE_DIR, "project_folder")
+    
+    # Remove the directory if it exists to start fresh
+    if os.path.exists(project_dir):
+        import shutil
+        shutil.rmtree(project_dir)
+
+    # Create the project directory
+    os.makedirs(project_dir, exist_ok=True)
+
+    # Create Django project using subprocess
+    subprocess.run(
+        ["django-admin", "startproject", project_name, project_dir],
+        check=True,
+    )
+
+    # Path to the newly created project directory
+    created_project_dir = os.path.join(project_dir, project_name)
+
+    # Navigate to the project directory and create the app
+    subprocess.run(
+        ["python3", "manage.py", "startapp", app_name],
+        cwd=project_dir,
+        check=True,
+    )
+
+    # Path to the app directory
+    app_dir = os.path.join(project_dir, app_name)
+
+    # Ensure the app is added to INSTALLED_APPS in settings.py
+    settings_path = os.path.join(created_project_dir, "settings.py")
+    with open(settings_path, "a") as settings_file:
+        settings_file.write(f"\nINSTALLED_APPS.append('{app_name}')\n")
+
+    # Create templates directory for the app
+    templates_dir = os.path.join(app_dir, "templates", app_name)
+    os.makedirs(templates_dir, exist_ok=True)
+
+    # Generate templates for the app
+    from .models import Template  # Adjust import based on your project structure
+
+    templates = Template.objects.all()
+    for template in templates:
+        template_html = generate_template_by_id(template.id)
+        template_path = os.path.join(templates_dir, f"{template.name}.html")
+        with open(template_path, "w") as file:
+            file.write(template_html)
+
+    # Zip the project folder
+    zip_buffer = BytesIO()
+    with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
+        for root, dirs, files in os.walk(project_dir):
+            for file in files:
+                file_path = os.path.join(root, file)
+                zip_file.write(file_path, os.path.relpath(file_path, project_dir))
+
+    # Finalize the ZIP file
+    zip_buffer.seek(0)
+
+    # Serve the ZIP file as a download
+    response = HttpResponse(zip_buffer, content_type="application/zip")
+    response["Content-Disposition"] = f'attachment; filename="{project_name}.zip"'
+
+    # Cleanup: Remove the project folder after zipping (optional)
+    import shutil
+    shutil.rmtree(project_dir)
+
+    return response

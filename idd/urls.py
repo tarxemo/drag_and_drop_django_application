@@ -41,5 +41,4 @@ urlpatterns = [
     path('crud/<str:table_name>/<int:pk>/delete/', delete_view, name='delete_view'),
     
     path('generate-project/', generate_django_project, name='generate_project'),
-    path('templates_repo/', template_repository, name='all_templates'),
 ]
