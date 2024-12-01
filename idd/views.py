@@ -5,13 +5,13 @@ from django.middleware.csrf import get_token
 import json
 from .models import *
 from .utils import *
-from .form_utils import *
-from .templates_utils import *
+from utils.form_utils import *
+from utils.templates_utils import *
+from utils.models_utils import *
 from django.shortcuts import render, redirect, get_object_or_404
 import joblib
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import FileSystemStorage
-from .models_utils import *
 import os
 import tempfile
 import shutil
@@ -625,6 +625,7 @@ def generate_django_project(request):
 
 def templates_gallery(request):
     templates = Template.objects.all()
+<<<<<<< HEAD
     parent_id = request.GET.get('parent_id')
     destination_id = request.GET.get('destination_id')
     source_id = request.GET.get('source_id')
@@ -632,6 +633,8 @@ def templates_gallery(request):
         print("**************************************")
         copy_template(source_id, destination_id)
         return redirect("template_detail", destination_id)
+=======
+>>>>>>> origin/tarxemo
     templates_with_html = [
         {
             'id': template.id,
@@ -641,13 +644,14 @@ def templates_gallery(request):
         }
         for template in templates
     ]
-    return render(request, 'templates_gallery.html', {'templates': templates_with_html, 'parent_id':parent_id})
+    return render(request, 'templates_gallery.html', {'templates': templates_with_html})
 
 
 def one_template_detail(request, template_id):
     template = get_object_or_404(Template, id=template_id)
     html_code = generate_template_by_id(template_id)
     return render(request, 'one_template_detail.html', {'template': template, 'html_code': html_code})
+<<<<<<< HEAD
 
 
 import os
@@ -729,3 +733,5 @@ def create_django_project(request, project_name="my_project", app_name="new_app"
     return response
 
 
+=======
+>>>>>>> origin/tarxemo

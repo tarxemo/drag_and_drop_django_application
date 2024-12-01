@@ -47,5 +47,4 @@ urlpatterns = [
     path('templates/', templates_gallery, name='templates_gallery'),
     path('templates/<int:template_id>/', one_template_detail, name='one_template_detail'),
     
-    path('create_django_project/', create_django_project, name='create_django_project')
 ]
