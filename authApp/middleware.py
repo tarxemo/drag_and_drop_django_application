@@ -12,7 +12,7 @@ class LoginRequiredMiddleware:
 
     def __call__(self, request):
         # Exclude certain paths from being protected (like login or signup)
-        if not request.user.is_authenticated and request.path not in [reverse('login'), reverse('signup')]:
+        if not request.user.is_authenticated and request.path not in [reverse('login'), reverse('signup'), reverse('signup')]:
             return redirect('login')  # or `redirect('/auth/login/')`
 
         response = self.get_response(request)

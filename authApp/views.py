@@ -57,5 +57,5 @@ def signup(request):
     return render(request, "registration/signup.html", {"form": form})
 
 
-def home(request):
-    return render(request,'home.html')
+def landingpage(request):
+    return render(request, 'landingpage.html')
