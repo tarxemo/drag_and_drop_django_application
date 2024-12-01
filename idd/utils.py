@@ -161,7 +161,7 @@ def generate_download_template(template_id):
         inner_indent = '    ' * (indent_level + 1)
         attributes = ' '.join(
             [f'{attr.attribute_name}="{attr.attribute_value}"' for attr in tag.attributes.all()] + 
-            [f'class="{" ".join(cls.class_name for cls in tag.tageds.all())}"']
+            [f'class="{" ".join(cls.class_name.class_name for cls in tag.tagclasses.all())}"'] 
         )
         children = ''.join(build_tag_tree(child, indent_level + 1) for child in tag.children.all().order_by('position'))
         content = (tag.text_content or '') + children

@@ -21,6 +21,10 @@ from django.http import FileResponse, HttpResponse
 from django.views import View
 
 
+def homepage(request):
+    return render(request,'homepage.html')
+
+
 def template_list(request):
     templates = Template.objects.all()
     return render(request, 'template_list.html', {'templates': templates})
@@ -622,10 +626,17 @@ def generate_django_project(request):
 def templates_gallery(request):
     templates = Template.objects.all()
     parent_id = request.GET.get('parent_id')
+    destination_id = request.GET.get('destination_id')
+    source_id = request.GET.get('source_id')
+    if source_id != None and destination_id != None:
+        print("**************************************")
+        copy_template(source_id, destination_id)
+        return redirect("template_detail", destination_id)
     templates_with_html = [
         {
             'id': template.id,
             'name': template.name,
+            # 'first_tag':Tag.objects.filter(template=template, parent_tag=None).first(),
             'html': generate_template_by_id(template.id)
         }
         for template in templates
@@ -716,3 +727,5 @@ def create_django_project(request, project_name="my_project", app_name="new_app"
     shutil.rmtree(project_dir)
 
     return response
+
+

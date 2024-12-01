@@ -80,7 +80,13 @@
     <!-- Sidebar with Navigation -->
     <div class="sidebar">
         <a href="{% url 'template_list' %}" data-tooltip="Home"><i class="fas fa-home"></i></a>
-        <!-- Other sidebar links... -->
+        <a href="{% url 'add_child_tag' template.id %}?tag_id={{tag.id}}" data-tooltip="Add Child Tag"><i class="fas fa-tags"></i></a>
+        <a href="{% url 'edit_tag' template.id %}?tag_id={{tag.id}}" data-tooltip="Edit Tag"><i class="fas fa-edit"></i></a>
+        <a href="{% url 'view_all_children' template.id %}?tag_id={{tag.id}}" data-tooltip="All Children Tags"><i class="fas fa-sitemap"></i></a>
+        <a href="{% url 'view_all_classes' template.id %}?tag_id={{tag.id}}" data-tooltip="All Classes"><i class="fas fa-list"></i></a>
+        <a href="{% url 'add_class' template.id %}?tag_id={{tag.id}}" data-tooltip="Add Class"><i class="fas fa-plus-circle"></i></a>
+        <a href="{% url 'add_attribute' template.id %}?tag_id={{tag.id}}" data-tooltip="Add Attribute"><i class="fas fa-cogs"></i></a>
+        <a href="{% url 'view_all_attributes' template.id %}?tag_id={{tag.id}}" data-tooltip="All Attributes"><i class="fas fa-list-alt"></i></a>
     </div>
 
     <!-- Main Content -->
@@ -95,10 +101,11 @@
             <!-- Right Panel for Displaying Template -->
             <div class="w-1/2 p-4 border-l">
                 <h2 class="text-xl font-bold mb-4">Template Preview</h2>
-                <div id="templatePreview" class="border p-4 droppable">
+                <div id="templatePreview" class="border p-4 droppable overflow-scroll">
                     {{ html_structure|safe }}
                 </div>
                 <button id="editSelectedPart" class="bg-blue-500 text-white px-4 py-2 rounded mt-4">Edit Selected Part</button>
+                <a href="{% url 'templates_gallery' %}?parent_id={{tag.template.id}}" class="bg-blue-500 text-white px-4 py-2 rounded mt-4">Import Template</a>
             </div>
         </div>
     </div>

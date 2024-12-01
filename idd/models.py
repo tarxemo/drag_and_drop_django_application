@@ -81,3 +81,19 @@ class Table(models.Model):
 class Book(models.Model):
     name = models.CharField(max_length=50)
     
+    
+class TemplateCategory(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.name
+
+class TemplatesOwnership(models.Model):
+    application = models.ForeignKey(Application, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)  # Remove unique=True
+    category = models.ForeignKey(TemplateCategory, on_delete=models.SET_NULL, null=True, related_name="templates")
+
+    def __str__(self):
+        return f"{self.name} ({self.category.name if self.category else 'Uncategorized'})"
+
+    
