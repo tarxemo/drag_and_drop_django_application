@@ -20,6 +20,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
+    path('', include('landingpage.urls')),
     path('hidfor/', admin.site.urls),
     path('auth/', include("authApp.urls")),
     path('crud/', include("cruder.urls")),

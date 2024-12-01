@@ -19,12 +19,15 @@ import subprocess
 from io import BytesIO
 from django.http import FileResponse, HttpResponse
 from django.views import View
+from django.contrib.auth.decorators import login_required
 
 
+@login_required
 def template_list(request):
     templates = Template.objects.all()
     return render(request, 'template_list.html', {'templates': templates})
 
+@login_required
 def add_template(request):
     if request.method == 'POST':
         name = request.POST.get('name')
