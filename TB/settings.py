@@ -17,7 +17,8 @@ from datetime import timedelta, datetime
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+LOGIN_REDIRECT_URL = "home"
+LOGOUT_REDIRECT_URL = "login"
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -57,7 +58,7 @@ JAZZMIN_SETTINGS = {
     "site_title": "Admin",
     "site_header": "Interface Driven",
     "welcome_sign": "Welcome to My Admin Pannel",
-    "site_logo": "{% static 'logo.jpeg' %}",
+    "site_logo": "logo.jpeg",
     "show_sidebar": True,
     "navigation_expanded": True,
     "hide_apps": [],
@@ -73,27 +74,7 @@ JAZZMIN_SETTINGS = {
     "show_ui_builder": False,
 }
 
-JAZZMIN_UI_TWEAKS = {
-    "theme": "cosmo",  # Base theme (optional, you can choose from Jazzmin themes)
-    # "dark_mode_theme": "darkly",  # Dark theme (optional, choose from Jazzmin themes)
-    "navbar": "navbar-dark",  # Navbar style
-    "navbar_class": "bg-primary",  # Apply primary color to the navbar background
-    "sidebar": "sidebar-dark-primary",  # Dark sidebar using primary color scheme
-    "brand_colour": "#000B58",  # Header brand color
-    "accent": "#000B58",  # Accent color across the UI
-    "navbar_color": "#000B58",  # Navbar background color
-    "sidebar_bg": "#003161",  # Sidebar background color
-    "sidebar_hover": "#006A67",  # Sidebar item hover color
-    "sidebar_active": "#000B58",  # Active sidebar item color
-    "buttons": {
-        "primary": "#000B58",  # Main button color
-        "secondary": "#f8f9fa",  # Light secondary button (optional)
-        "info": "#006A67",  # Info button color
-        "warning": "#ffc107",  # Warning button color (optional)
-        "danger": "#dc3545",  # Danger button color (optional)
-        "success": "#28a745"  # Success button color (optional)
-    },
-}
+
 
 
 REST_FRAMEWORK = {
@@ -118,6 +99,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'authApp.middleware.LoginRequiredMiddleware',
 ]
 
 ROOT_URLCONF = 'TB.urls'

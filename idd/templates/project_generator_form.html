@@ -1,33 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generate Django Project</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-    <div class="bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
-        <h1 class="text-2xl font-semibold text-gray-800 text-center mb-6">Generate a New Django Project</h1>
-        <form method="post" class="space-y-6">
-            {% csrf_token %}
-            <div>
-                <label for="project_name" class="block text-sm font-medium text-gray-700">Project Name</label>
-                <input type="text" id="project_name" name="project_name" required
-                       class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200">
-            </div>
-            
-            <div>
-                <label for="app_name" class="block text-sm font-medium text-gray-700">App Name</label>
-                <input type="text" id="app_name" name="app_name" required
-                       class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200">
-            </div>
-            
-            <button type="submit"
-                    class="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-300 ease-in-out transform hover:scale-105">
-                Generate Project
-            </button>
-        </form>
+{% extends "homepage.html"%}
+{% load static%}
+
+    {%block title%}Generate Django Project{%endblock%}
+
+{%block content%}
+    <div class="bg-gray-100 flex items-center justify-center min-h-screen">
+        <div class="bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
+            <h1 class="text-2xl font-semibold text-gray-800 text-center mb-6">Generate a New Django Project</h1>
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                <div>
+                    <label for="project_name" class="block text-sm font-medium text-gray-700">Project Name</label>
+                    <input type="text" id="project_name" name="project_name" required
+                        class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200">
+                </div>
+                
+                <div>
+                    <label for="app_name" class="block text-sm font-medium text-gray-700">App Name</label>
+                    <input type="text" id="app_name" name="app_name" required
+                        class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200">
+                </div>
+                
+                <button type="submit"
+                        class="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-300 ease-in-out transform hover:scale-105">
+                    Generate Project
+                </button>
+            </form>
+        </div>
     </div>
-</body>
-</html>
+{%endblock%}

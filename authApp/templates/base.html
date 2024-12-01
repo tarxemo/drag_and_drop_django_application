@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Django Authentication</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-50">
+    <!-- Navbar -->
+    <nav class="bg-[#000B58] text-white py-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <!-- Logo -->
+            <div class="text-2xl font-bold">
+                <a href="/" class="flex items-center">
+                    <img src="{% static 'image.png' %}" alt="Logo" class="h-8 mr-2"> <!-- Replace 'logo.png' with your logo image -->
+                    AIBS
+                </a>
+            </div>
+
+            <!-- Navigation Links (if needed) -->
+            <div class="space-x-4">
+                <a href="/" class="hover:text-yellow-400">Home</a>
+                <a href="/about" class="hover:text-yellow-400">About</a>
+                <a href="/contact" class="hover:text-yellow-400">Contact</a>
+            </div>
+
+            <!-- Auth Links (Login / Logout) -->
+            <div class="flex items-center space-x-4">
+                {% if user.is_authenticated %}
+                    <form action="{% url 'logout' %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="bg-yellow-400 text-blue-900 px-4 py-2 rounded-md hover:bg-yellow-300">Logout</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="bg-yellow-400 text-blue-900 px-4 py-2 rounded-md hover:bg-yellow-300">Login</a>
+                    <a href="{% url 'signup' %}" class="bg-blue-900 text-yellow-400 px-4 py-2 rounded-md hover:bg-blue-800">Sign Up</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content Section -->
+    <div class="container mx-auto py-8">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+</body>
+</html>

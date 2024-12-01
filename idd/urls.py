@@ -2,6 +2,7 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
+    path('homepage/', homepage , name='home'),
     path('', template_list, name='template_list'),
     path('add/', add_template, name='add_template'),
     path('delete/<int:template_id>/', delete_template, name='delete_template'),
@@ -30,6 +31,8 @@ urlpatterns = [
     path('template/<int:template_id>/delete_tag/', delete_tag, name='delete_tag'),
     path('upload_html/', upload_html, name='upload_html'),
     
+    path('predict/', predict_view, name="predict"),
+    
     path('change_parent_tag/', change_parent_tag, name='save_tag_position'),
     path('add_new_tag/', add_new_tag, name="add_new_tag"),
     path('update_parent_tag/', update_parent_tag, name='update_parent_tag'),
@@ -40,5 +43,8 @@ urlpatterns = [
     path('crud/<str:table_name>/<int:pk>/edit/', edit_view, name='edit_view'),  # Edit an existing record
     path('crud/<str:table_name>/<int:pk>/delete/', delete_view, name='delete_view'),
     
-    path('generate-project/', generate_django_project, name='generate_project')
+    path('generate-project/', generate_django_project, name='generate_project'),
+    path('templates/', templates_gallery, name='templates_gallery'),
+    path('templates/<int:template_id>/', one_template_detail, name='one_template_detail'),
+    
 ]

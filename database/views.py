@@ -1,4 +1,5 @@
 from django.http import Http404
+from authApp.models import DynamicModelLog
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -62,7 +63,12 @@ class DynamicModelAPIView(APIView):
 
             # Create the model dynamically
             create_model_file(model_name, fields)
-
+            
+            DynamicModelLog.objects.create(
+                user=request.user if request.user.is_authenticated else None,
+                model_name=model_name,
+            )
+            
             return Response({"status": "success", "message": f"Model {model_name} created and migrations applied!"}, status=status.HTTP_201_CREATED)
 
         except Exception as e:

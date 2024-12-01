@@ -1,0 +1,23 @@
+/* Background color for the sidebar */
+.sidebar {
+    background-color: #000B58 !important;
+    color: #f8f9fa !important;
+}
+
+/* Highlight the active menu */
+.sidebar .active {
+    background-color: #f8f9fa !important;
+    color: #000B58 !important;
+}
+
+/* Header customization */
+.navbar {
+    background-color: #000B58 !important;
+    color: #f8f9fa !important;
+}
+
+/* Table headers */
+.table thead {
+    background-color: #000B58;
+    color: #f8f9fa;
+}

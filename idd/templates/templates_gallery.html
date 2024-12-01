@@ -1,0 +1,67 @@
+{% extends 'homepage.html'%}
+{% load static%}
+{%block title%}Templates Gallery {%endblock%}
+
+{%block content%}
+<div class="bg-gray-100 text-gray-800">
+
+    <header class="bg-[var(--primary-dark)] text-white py-6 shadow-lg">
+        <div class="container mx-auto px-4">
+            <h1 class="text-3xl font-bold">HTML Templates Gallery</h1>
+            <p class="text-lg text-[var(--primary-light)]">Explore and Interact with Beautiful HTML Pages</p>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-4 py-10">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for template in templates %}
+            <div class="bg-white rounded-lg shadow-md hover-shadow p-6 relative">
+                <!-- Template Name -->
+                <h2 class="text-xl font-bold text-[var(--primary-dark)] mb-4">{{ template.name }}</h2>
+
+                <!-- HTML Preview -->
+                <div class="bg-gray-100 border border-gray-300 rounded-md overflow-hidden mb-4">
+                    <iframe srcdoc="{{ template.html }}" class="w-full h-48"></iframe>
+                </div>
+
+                <!-- Like Button -->
+                <div class="flex justify-between items-center">
+                    <button class="flex items-center gap-2 text-[var(--primary-light)]">
+                        <i class="fas fa-thumbs-up"></i> 
+                        <span>Like</span>
+                    </button> 
+                    {{template.first_tag.id}}
+                    {% if parent_id  %}
+                    <a href="{% url 'templates_gallery' %}?destination_id={{ parent_id }}&source_id={{ template.id }}" class="flex items-center gap-2 text-[var(--primary-dark)] hover:text-[var(--primary-light)]">
+                        <i class="fa fa-check-square"></i> 
+                        <span>Select</span>
+                    </a> 
+                    {% endif %}
+
+
+                    <span class="text-sm text-gray-500">Likes: <span class="font-bold">0</span></span>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="absolute top-2 right-2 flex gap-2">
+                    <a href="{% url 'one_template_detail' template.id%}" class="text-[var(--primary-dark)] hover:text-[var(--primary-light)]">
+                        <i class="fas fa-eye"></i>
+                    </a>
+                    <a href="{% url 'download_html' template.id %}" class="text-[var(--primary-dark)] hover:text-[var(--primary-light)]">
+                        <i class="fas fa-download"></i>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <footer class="bg-gray-800 text-white py-4">
+        <div class="container mx-auto px-4">
+            <p class="text-center">&copy; 2024 Templates Gallery. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+</div>
+{%endblock%}
+
