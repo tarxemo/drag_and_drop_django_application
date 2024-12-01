@@ -15,5 +15,7 @@ class LoginRequiredMiddleware:
         if not request.user.is_authenticated and request.path not in [reverse('login'), reverse('signup'), reverse('landingpage')]:
             return redirect('login')  # or `redirect('/auth/login/')`
 
+        if request.user.is_authenticated and request.path in [reverse('login'), reverse('signup')]:
+            return redirect('home') 
         response = self.get_response(request)
         return response
