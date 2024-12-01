@@ -625,7 +625,6 @@ def generate_django_project(request):
 
 def templates_gallery(request):
     templates = Template.objects.all()
-<<<<<<< HEAD
     parent_id = request.GET.get('parent_id')
     destination_id = request.GET.get('destination_id')
     source_id = request.GET.get('source_id')
@@ -633,8 +632,6 @@ def templates_gallery(request):
         print("**************************************")
         copy_template(source_id, destination_id)
         return redirect("template_detail", destination_id)
-=======
->>>>>>> origin/tarxemo
     templates_with_html = [
         {
             'id': template.id,
@@ -651,7 +648,6 @@ def one_template_detail(request, template_id):
     template = get_object_or_404(Template, id=template_id)
     html_code = generate_template_by_id(template_id)
     return render(request, 'one_template_detail.html', {'template': template, 'html_code': html_code})
-<<<<<<< HEAD
 
 
 import os
@@ -733,5 +729,3 @@ def create_django_project(request, project_name="my_project", app_name="new_app"
     return response
 
 
-=======
->>>>>>> origin/tarxemo

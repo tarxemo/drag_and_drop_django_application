@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="max-w-lg mx-auto p-8 bg-white rounded-lg shadow-lg mt-12">
+    <h2 class="text-center text-3xl   text-black font-semibold p-4 rounded-lg mb-6">Sign Up</h2>
+    
+    <form method="post">
+      {% csrf_token %}
+      
+      <div class="space-y-6">
+        <!-- First Name and Last Name Fields in Columns -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="space-y-2">
+            <label for="{{ form.first_name.id_for_label }}" class="block text-lg font-medium text-gray-700">First Name</label>
+            <div class="relative">
+              <input type="text" 
+              name="first_name"
+              id="{{ form.first_name.id_for_label }}"
+              class="block w-full p-2
+               border border-gray-300 rounded-md
+               focus:outline-none focus:ring-2 
+               focus:ring-blue-500"
+             placeholder="firstname" 
+              
+               />
+            </div> 
+            {% if form.first_name.help_text %}
+              <p class="text-sm text-gray-500">{{ form.first_name.help_text }}</p>
+            {% endif %}
+            {% if form.first_name.errors %}
+              <div class="text-sm text-red-500">
+                {% for error in form.first_name.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="space-y-2">
+            <label for="{{ form.last_name.id_for_label }}" class="block text-lg font-medium text-gray-700">Last Name</label>
+            <div class="relative">
+              <input type="text" name="last_name" id="{{ form.last_name.id_for_label }}"
+               class="block w-full p-2 border
+                border-gray-300 rounded-md focus:outline-none 
+                focus:ring-2 focus:ring-blue-500"
+                 placeholder="firstname"  
+                 
+                 />
+            </div>
+            {% if form.last_name.help_text %}
+              <p class="text-sm text-gray-500">{{ form.last_name.help_text }}</p>
+            {% endif %}
+            {% if form.last_name.errors %}
+              <div class="text-sm text-red-500">
+                {% for error in form.last_name.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+<!--other fields-->
+{% for field in form %}
+          {% if field.name != 'first_name' and field.name != 'last_name' and field.name != 'password1' and field.name != 'password2' %}
+            <div class="space-y-2">
+              <label for="{{ field.id_for_label }}" class="block text-lg font-medium text-gray-700">{{ field.label }}</label>
+              <div class="relative">
+                <input type="{{ field.type }}" 
+                name="{{ field.name }}" 
+                id="{{ field.id_for_label }}" 
+                class="block w-full p-2 border border-gray-300 
+                rounded-md focus:outline-none focus:ring-2 
+                focus:ring-blue-500" 
+                placeholder="{{ field.label }}"
+                 
+                />
+              </div>
+              {% if field.help_text %}
+                <p class="text-sm text-gray-500">{{ field.help_text }}</p>
+              {% endif %}
+              {% if field.errors %}
+                <div class="text-sm text-red-500">
+                  {% for error in field.errors %}
+                    <p>{{ error }}</p>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+<!-- Password and Confirm Password Fields in Columns -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="space-y-2">
+            <label for="{{ form.password1.id_for_label }}" class="block text-lg font-medium text-gray-700">Password</label>
+            <div class="relative">
+              <input type="password"
+               name="password1"
+               id="{{ form.password1.id_for_label }}"
+               class="block w-full p-2 border
+               border-gray-300 rounded-md focus:outline-none 
+               focus:ring-2 focus:ring-blue-500" 
+               />
+            </div>
+            {% if form.password1.help_text %}
+              <p class="text-sm text-gray-500">{{ form.password1.help_text }}</p>
+            {% endif %}
+            {% if form.password1.errors %}
+              <div class="text-sm text-red-500">
+                {% for error in form.password1.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="space-y-2">
+            <label for="{{ form.password2.id_for_label }}" class="block text-lg font-medium text-gray-700">Confirm Password</label>
+            <div class="relative">
+              <input type="password" name="password2" id="{{ form.password2.id_for_label }}" class="block w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+            {% if form.password2.help_text %}
+              <p class="text-sm text-gray-500">{{ form.password2.help_text }}</p>
+            {% endif %}
+            {% if form.password2.errors %}
+              <div class="text-sm text-red-500">
+                {% for error in form.password2.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Other fields (username, email, etc.) -->
+        
+      </div>
+
+      <button type="submit" class="w-full mt-6 py-3 bg-blue-900 text-yellow-400 font-semibold text-lg rounded-md hover:bg-yellow-400 hover:text-blue-900 transition-all">
+        Sign Up
+      </button>
+      <div class="mt-4 text-center">
+        <p class="text-sm text-gray-600">already have an account? <a href="{% url 'login' %}" class="text-blue-600 hover:text-blue-500">Login</a></p>
+      </div>
+    </form>
+  </div>
+{% endblock %}
