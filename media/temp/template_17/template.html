@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   admin_CustomUser_add
+  </title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.0/dist/tailwind.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"/>
+ </head>
+ <body>
+  <div class="container mx-auto" id="-1">
+   <form action="" class="text-white max-w-md mx-auto bg-[#003161] p-6 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg mt-10 space-y-4" method="POST">
+    <django_tag class="">
+     {% csrf_token %}
+    </django_tag>
+    <div class="">
+     <label class="block font-semibold text-gray-200" for="password">
+      Password
+     </label>
+     <input class="form-input block mt-1 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 p-2 focus:ring-[#000B58] transition duration-200 ease-in-out transform hover:scale-105 bg-gray-100 text-gray-900 focus:border-[#000B58]" id="password" name="password" placeholder="Enter Password" required="" type="text"/>
+    </div>
+    <div class="">
+     <label class="block font-semibold text-gray-200" for="last_login">
+      Last Login
+     </label>
+     <input class="form-input block mt-1 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 p-2 focus:ring-[#000B58] transition duration-200 ease-in-out transform hover:scale-105 bg-gray-100 text-gray-900 focus:border-[#000B58]" id="last_login" name="last_login" placeholder="Enter Last Login" required="" type="text"/>
+    </div>
+    <div class="flex items-center">
+     <input class="focus:ring-2 focus:ring-[#000B58] transition duration-200 ease-in-out transform hover:scale-105 form-checkbox text-[#000B58]" id="is_superuser" name="is_superuser" type="checkbox"/>
+     <label class="font-semibold ml-2 text-gray-200" for="is_superuser">
+      Superuser Status
+     </label>
+    </div>
+    <div class="">
+     <label class="block font-semibold text-gray-200" for="email">
+      Email
+     </label>
+     <input class="form-input block mt-1 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 p-2 focus:ring-[#000B58] transition duration-200 ease-in-out transform hover:scale-105 bg-gray-100 text-gray-900 focus:border-[#000B58]" id="email" name="email" placeholder="Enter Email" required="" type="text"/>
+    </div>
+    <div class="">
+     <label class="block font-semibold text-gray-200" for="first_name">
+      First Name
+     </label>
+     <input class="form-input block mt-1 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 p-2 focus:ring-[#000B58] transition duration-200 ease-in-out transform hover:scale-105 bg-gray-100 text-gray-900 focus:border-[#000B58]" id="first_name" name="first_name" placeholder="Enter First Name" required="" type="text"/>
+    </div>
+    <div class="">
+     <label class="block font-semibold text-gray-200" for="last_name">
+      Last Name
+      <label class="font-semibold ml-2 text-gray-200" for="is_staff">
+       Is Staff
+       <div class="flex items-center">
+        <input class="focus:ring-2 focus:ring-[#000B58] transition duration-200 ease-in-out transform hover:scale-105 form-checkbox text-[#000B58]" id="is_staff" name="is_staff" type="checkbox"/>
+       </div>
+      </label>
+     </label>
+     <input class="form-input block mt-1 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 p-2 focus:ring-[#000B58] transition duration-200 ease-in-out transform hover:scale-105 bg-gray-100 text-gray-900 focus:border-[#000B58]" id="last_name" name="last_name" placeholder="Enter Last Name" required="" type="text"/>
+    </div>
+    <div class="flex items-center">
+     <input class="focus:ring-2 focus:ring-[#000B58] transition duration-200 ease-in-out transform hover:scale-105 form-checkbox text-[#000B58]" id="is_active" name="is_active" type="checkbox"/>
+     <label class="font-semibold ml-2 text-gray-200" for="is_active">
+      Is Active
+     </label>
+    </div>
+    <div class="">
+     <label class="block font-semibold text-gray-200" for="username">
+      Username
+     </label>
+     <input class="form-input block mt-1 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 p-2 focus:ring-[#000B58] transition duration-200 ease-in-out transform hover:scale-105 bg-gray-100 text-gray-900 focus:border-[#000B58]" id="username" name="username" placeholder="Enter Username" required="" type="text"/>
+    </div>
+    <button class="w-full rounded-md py-2 px-4 text-white transition-all duration-300 font-semibold ease-in-out transform hover:scale-105 bg-[#000B58] hover:bg-[#003161]" type="submit">
+     Submit
+    </button>
+    <p class="">
+     Register a new user
+    </p>
+   </form>
+  </div>
+ </body>
+</html>

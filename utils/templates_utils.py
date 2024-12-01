@@ -3,7 +3,7 @@ from django.conf import settings
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from bs4 import BeautifulSoup
-from .models import *
+from idd.models import *
 from .form_utils import *
 
 from django.template import Template as DjangoTemplate, Context
