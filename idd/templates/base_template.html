@@ -74,6 +74,64 @@
             text-align: center;
             cursor: grab;
         }
+        /* Ensure the draggable items have a consistent look and feel */
+.tag-item {
+    transition: background-color 0.2s ease;
+    cursor: move; /* Show a move cursor when dragging */
+}
+
+/* Highlight the draggable item when hovering over it */
+.tag-item:hover {
+    background-color: #e5e7eb; /* Lighten the background on hover */
+}
+
+/* Provide feedback on valid drop targets */
+.droppable {
+    position: relative;
+    min-height: 200px; /* Ensure there's enough space for dropping */
+    border: 2px dashed #e5e7eb; /* Dashed border for drop targets */
+    transition: border 0.3s ease-in-out;
+}
+
+/* Change the border of the drop target when dragging over it */
+.droppable.drag-over {
+    border-color: #34d399; /* Green color to indicate a valid drop zone */
+}
+
+/* Optionally, add a placeholder effect for where the item is going to be dropped */
+.droppable .drop-preview {
+    position: absolute;
+    width: 100%;
+    height: 30px; /* Height of the placeholder */
+    background-color: rgba(52, 211, 153, 0.3); /* Semi-transparent green */
+    border: 1px dashed #34d399;
+    pointer-events: none; /* Prevent interaction with the placeholder */
+}
+
+/* Optional: Style for the dragged item itself (i.e., show it as a floating element) */
+.dragging {
+    opacity: 0.5; /* Make the dragged item slightly transparent */
+    transform: scale(1.1); /* Slightly enlarge the dragged element */
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* When dropping the item, apply some animation for smooth placement */
+.drop-animation {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Keyframe for smooth fade-in effect on drop */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
     </style>
 </head>
 <body>
@@ -88,39 +146,38 @@
         <a href="{% url 'add_class' template.id %}?tag_id={{tag.id}}" data-tooltip="Add Class"><i class="fas fa-plus-circle"></i></a>
         <a href="{% url 'add_attribute' template.id %}?tag_id={{tag.id}}" data-tooltip="Add Attribute"><i class="fas fa-cogs"></i></a>
         <a href="{% url 'view_all_attributes' template.id %}?tag_id={{tag.id}}" data-tooltip="All Attributes"><i class="fas fa-list-alt"></i></a>
-    </div>
-
-    <!-- Main Content -->
+    </div><!-- Main Content -->
     <div class="container mx-auto mt-5 ml-20">
         <div class="flex">
             <!-- Left Panel for Navigation and Content -->
-            <div class="w-1/2 p-4 border-r"> 
+            <div class="w-1/2 p-4 border-r">
                 {% if tag.parent_tag %}
-                <a class="bg-green-300" href="{% url 'view_all_children' template.id %}?tag_id={{ tag.parent_tag.id }}">Parent Tag</a>
+                    <a class="bg-green-300" href="{% url 'view_all_children' template.id %}?tag_id={{ tag.parent_tag.id }}">Parent Tag</a>
                 {% endif %}
                 {% block content %}
                 {% endblock %}
             </div>
-
+    
             <!-- Right Panel for Displaying Template -->
             <div class="w-1/2 p-4 border-l">
                 <h2 class="text-xl font-bold mb-4">Template Preview</h2>
-                <div id="templatePreview" class="border p-4 droppable overflow-scroll">
+                <div id="templatePreview" class="border p-4 droppable overflow-auto">
                     {{ html_structure|safe }}
                 </div>
                 <button id="editSelectedPart" class="bg-blue-500 text-white px-4 py-2 rounded mt-4">Edit Selected Part</button>
-                <a href="{% url 'templates_gallery' %}?parent_id={{tag.template.id}}" class="bg-blue-500 text-white px-4 py-2 rounded mt-4">Import Template</a>
+                <a href="{% url 'templates_gallery' %}?parent_id={{ tag.template.id }}" class="bg-blue-500 text-white px-4 py-2 rounded mt-4">Import Template</a>
             </div>
         </div>
     </div>
-
+    
     <!-- Tag List for Dragging -->
-    <div class="tag-list">
+    <div class="tag-list mt-4">
         <h3 class="font-bold text-center mb-4">Available Tags</h3>
-        <div id="tag-p" class="tag-item draggable" draggable="true">p</div>
-        <div id="tag-h1" class="tag-item draggable" draggable="true">h1</div>
-        <div id="tag-button" class="tag-item draggable" draggable="true">button</div>
+        <div id="tag-p" class="tag-item draggable bg-gray-200 hover:bg-gray-300 p-2 rounded mb-2 cursor-move" draggable="true">p</div>
+        <div id="tag-h1" class="tag-item draggable bg-gray-200 hover:bg-gray-300 p-2 rounded mb-2 cursor-move" draggable="true">h1</div>
+        <div id="tag-button" class="tag-item draggable bg-gray-200 hover:bg-gray-300 p-2 rounded mb-2 cursor-move" draggable="true">button</div>
     </div>
+    
 
     <script>
         // Assuming you know the tag's ID
@@ -132,166 +189,186 @@
         }
     </script>
     
-    <!-- Drag and Drop Script -->
-    <script>
-        let draggedElement = null;
-        let currentParent = null;
-        let currentIndex = null;
-        
-        // Add dragstart event for tag items (ready-made list items)
-        document.querySelectorAll('.draggable').forEach(function(tag) {
-            tag.addEventListener('dragstart', function(e) {
-                draggedElement = e.target.id; // Get the ID of the dragged tag from the list
-                e.dataTransfer.setData('text/plain', draggedElement);
-            });
+   <!-- Drag and Drop Script -->
+<script>
+    let draggedElement = null;
+    let currentParent = null;
+    let currentIndex = null;
+    let dropTarget = null; // Variable to hold the current drop target
+
+    // Add dragstart event for tag items (ready-made list items)
+    document.querySelectorAll('.draggable').forEach(function(tag) {
+        tag.addEventListener('dragstart', function(e) {
+            draggedElement = e.target.id; // Get the ID of the dragged tag from the list
+            e.dataTransfer.setData('text/plain', draggedElement);
+            e.target.classList.add('dragging'); // Add dragging class for visual feedback
         });
-    
-        // Make HTML components inside the template preview draggable
-        document.querySelectorAll('#templatePreview *').forEach(function(element) {
-            element.setAttribute('draggable', true); // Enable draggable attribute on all child elements
-            element.addEventListener('dragstart', function(e) {
-                draggedElement = e.target; // Store reference to the dragged HTML component
-                currentParent = draggedElement.parentElement; // Store reference to the parent of the dragged element
-                currentIndex = Array.from(currentParent.children).indexOf(draggedElement); // Store the initial position
-                e.dataTransfer.setData('text/plain', draggedElement.id); // Set the data transfer
-            });
+
+        tag.addEventListener('dragend', function(e) {
+            e.target.classList.remove('dragging'); // Remove the dragging class when drag ends
         });
-    
-        // Enable dropping in template preview
-        let dropzone = document.getElementById('templatePreview');
-    
-        dropzone.addEventListener('dragover', function(e) {
-            e.preventDefault();
+    });
+
+    // Make HTML components inside the template preview draggable
+    document.querySelectorAll('#templatePreview *').forEach(function(element) {
+        element.setAttribute('draggable', true); // Enable draggable attribute on all child elements
+        element.addEventListener('dragstart', function(e) {
+            draggedElement = e.target; // Store reference to the dragged HTML component
+            currentParent = draggedElement.parentElement; // Store reference to the parent of the dragged element
+            currentIndex = Array.from(currentParent.children).indexOf(draggedElement); // Store the initial position
+            e.dataTransfer.setData('text/plain', draggedElement.id); // Set the data transfer
+            e.target.classList.add('dragging'); // Add dragging class for visual feedback
         });
+
+        element.addEventListener('dragend', function(e) {
+            e.target.classList.remove('dragging'); // Remove the dragging class when drag ends
+        });
+    });
+
+    // Enable dropping in template preview
+    let dropzone = document.getElementById('templatePreview');
     
-        dropzone.addEventListener('drop', function(e) {
-            e.preventDefault();
-            
-            if (draggedElement) {
-                // Determine the exact drop target
-                let dropTarget = document.elementFromPoint(e.clientX, e.clientY);
-                let parentTag = getValidParent(dropTarget);
-    
-                if (parentTag) {
-                    if (typeof draggedElement === 'string') {
-                        // Case: New tag dragged from the ready-made list
-                        let newTag = document.createElement(draggedElement.replace('tag-', '')); // Convert 'tag-p' -> 'p'
-                        newTag.textContent = "New " + draggedElement.replace('tag-', ''); // Set some placeholder content
-                        parentTag.appendChild(newTag); // Append the new tag to the selected parent
-    
-                        // Send AJAX request to save the new tag to the database
-                        let parentTagId = parentTag.getAttribute('data-id') || parentTag.getAttribute('id');
-                        saveNewTagToDatabase(newTag.tagName.toLowerCase(), parentTagId);
+    dropzone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        // Highlight the drop target
+        let target = document.elementFromPoint(e.clientX, e.clientY);
+        target = getValidParent(target);
+        if (target && target !== draggedElement) {
+            dropTarget = target;
+            target.classList.add('highlight-drop'); // Add highlight class for visual feedback
+        }
+    });
+
+    dropzone.addEventListener('dragleave', function(e) {
+        if (dropTarget) {
+            dropTarget.classList.remove('highlight-drop'); // Remove the highlight when dragging leaves
+        }
+    });
+
+    dropzone.addEventListener('drop', function(e) {
+        e.preventDefault();
+
+        if (draggedElement) {
+            let dropTarget = document.elementFromPoint(e.clientX, e.clientY);
+            let parentTag = getValidParent(dropTarget);
+
+            if (parentTag) {
+                // Case when dragging new tag from the ready-made list
+                if (typeof draggedElement === 'string') {
+                    let newTag = document.createElement(draggedElement.replace('tag-', '')); // Create new element
+                    newTag.textContent = "New " + draggedElement.replace('tag-', ''); // Placeholder content
+                    parentTag.appendChild(newTag); // Append the new tag to the parent element
+                    
+                    // Send AJAX request to save the new tag to the database
+                    let parentTagId = parentTag.getAttribute('data-id') || parentTag.getAttribute('id');
+                    saveNewTagToDatabase(newTag.tagName.toLowerCase(), parentTagId);
+                } else {
+                    // Case when dragging an existing component within the template
+                    let newParent = parentTag;
+                    let newIndex = Array.from(newParent.children).indexOf(dropTarget);
+
+                    if (newParent === currentParent && newIndex !== currentIndex) {
+                        // Same parent, but position changed
+                        updatePositionsInSameParent(draggedElement, currentParent, currentIndex, newIndex);
                     } else {
-                        // Case: Existing HTML component dragged within the template
-                        let newParent = parentTag; // New parent tag
-                        let newIndex = Array.from(newParent.children).indexOf(dropTarget); // New position within the parent
-                        
-                        if (newParent === currentParent && newIndex !== currentIndex) {
-                            // Same parent, but position changed
-                            updatePositionsInSameParent(draggedElement, currentParent, currentIndex, newIndex);
-                        } else {
-                            // Different parent
-                            newParent.appendChild(draggedElement); // Move the dragged element to the new parent
-    
-                            // Update the parent ID in the database for the moved component
-                            let draggedElementId = draggedElement.getAttribute('data-id') || draggedElement.getAttribute('id');
-                            let parentTagId = newParent.getAttribute('data-id') || newParent.getAttribute('id');
-                            updateParentTagInDatabase(draggedElementId, parentTagId);
-                        }
+                        // Different parent, move element
+                        newParent.appendChild(draggedElement); // Append the dragged element to the new parent
+                        updateParentTagInDatabase(draggedElement.id, newParent.id); // Update parent ID in database
                     }
                 }
             }
+        }
+
+        if (dropTarget) {
+            dropTarget.classList.remove('highlight-drop'); // Remove highlight after drop
+        }
+    });
+
+    // Function to save new tag to the database (from ready-made list)
+    function saveNewTagToDatabase(tagName, parentId) {
+        $.ajax({
+            url: '{% url "add_new_tag" %}', // URL for saving the new tag
+            type: 'POST',
+            data: {
+                'tag_name': tagName,
+                'parent_tag_id': parentId,
+                'template_id': '{{ template.id }}', // Current template ID
+                'csrfmiddlewaretoken': '{{ csrf_token }}' // CSRF token for Django
+            },
+            success: function(response) {
+                console.log('New tag saved successfully!');
+            },
+            error: function(xhr, status, error) {
+                console.error('Error saving new tag:', error);
+            }
         });
-    
-        // Function to save new tag to the database (from ready-made list)
-        function saveNewTagToDatabase(tagName, parentId) {
-            $.ajax({
-                url: '{% url "add_new_tag" %}', // URL for saving the new tag
-                type: 'POST',
-                data: {
-                    'tag_name': tagName,
-                    'parent_tag_id': parentId,
-                    'template_id': '{{ template.id }}', // Pass the current template ID
-                    'csrfmiddlewaretoken': '{{ csrf_token }}' // CSRF token for Django
-                },
-                success: function(response) {
-                    alert('New tag saved successfully!');
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error saving new tag:', error);
-                }
-            });
-        }
-    
-        // Function to update parent tag in the database (for moved components)
-        function updateParentTagInDatabase(elementId, newParentId) {
-            $.ajax({
-                url: '{% url "update_parent_tag" %}', // URL for updating parent tag
-                type: 'POST',
-                data: {
-                    'element_id': elementId,
-                    'new_parent_id': newParentId,
-                    'template_id': '{{ template.id }}', // Pass the current template ID
-                    'csrfmiddlewaretoken': '{{ csrf_token }}' // CSRF token for Django
-                },
-                success: function(response) {
-                    alert('Element moved successfully!');
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error moving element:', error);
-                }
-            });
-        }
-    
-        // Function to update the positions of sibling elements in the same parent
-        function updatePositionsInSameParent(draggedElement, parentElement, oldIndex, newIndex) {
-            // Move the dragged element to the new position in the DOM
-            if (newIndex < oldIndex) {
-                parentElement.insertBefore(draggedElement, parentElement.children[newIndex]);
-            } else {
-                parentElement.insertBefore(draggedElement, parentElement.children[newIndex + 1]);
+    }
+
+    // Function to update parent tag in the database (for moved components)
+    function updateParentTagInDatabase(elementId, newParentId) {
+        $.ajax({
+            url: '{% url "update_parent_tag" %}', // URL for updating parent tag
+            type: 'POST',
+            data: {
+                'element_id': elementId,
+                'new_parent_id': newParentId,
+                'template_id': '{{ template.id }}', // Current template ID
+                'csrfmiddlewaretoken': '{{ csrf_token }}' // CSRF token for Django
+            },
+            success: function(response) {
+                console.log('Element moved successfully!');
+            },
+            error: function(xhr, status, error) {
+                console.error('Error moving element:', error);
             }
-    
-            // Prepare the data to update the positions in the backend
-            let siblingElements = Array.from(parentElement.children);
-            let positionsData = siblingElements.map(function(child, index) {
-                return {
-                    element_id: child.getAttribute('data-id') || child.getAttribute('id'),
-                    position: index
-                };
-            });
-    
-            // Send AJAX request to update positions
-            $.ajax({
-                url: '{% url "update_positions" %}', // URL for updating positions
-                type: 'POST',
-                data: {
-                    'positions': JSON.stringify(positionsData),
-                    'parent_id': parentElement.getAttribute('data-id') || parentElement.getAttribute('id'),
-                    'template_id': '{{ template.id }}', // Pass the current template ID
-                    'csrfmiddlewaretoken': '{{ csrf_token }}' // CSRF token for Django
-                },
-                success: function(response) {
-                    alert('Positions updated successfully!');
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error updating positions:', error);
-                }
-            });
+        });
+    }
+
+    // Function to update the positions of sibling elements in the same parent
+    function updatePositionsInSameParent(draggedElement, parentElement, oldIndex, newIndex) {
+        if (newIndex < oldIndex) {
+            parentElement.insertBefore(draggedElement, parentElement.children[newIndex]);
+        } else {
+            parentElement.insertBefore(draggedElement, parentElement.children[newIndex + 1]);
         }
-    
-        // Function to find the valid parent for the drop event
-        function getValidParent(dropTarget) {
-            // If the dropTarget is a text node, get its parent element
-            if (dropTarget.nodeType === Node.TEXT_NODE) {
-                dropTarget = dropTarget.parentElement;
+
+        // Send request to update positions in the backend
+        let siblingElements = Array.from(parentElement.children);
+        let positionsData = siblingElements.map(function(child, index) {
+            return {
+                element_id: child.getAttribute('data-id') || child.getAttribute('id'),
+                position: index
+            };
+        });
+
+        $.ajax({
+            url: '{% url "update_positions" %}', // URL for updating positions
+            type: 'POST',
+            data: {
+                'positions': JSON.stringify(positionsData),
+                'parent_id': parentElement.getAttribute('data-id') || parentElement.getAttribute('id'),
+                'template_id': '{{ template.id }}', // Current template ID
+                'csrfmiddlewaretoken': '{{ csrf_token }}' // CSRF token for Django
+            },
+            success: function(response) {
+                console.log('Positions updated successfully!');
+            },
+            error: function(xhr, status, error) {
+                console.error('Error updating positions:', error);
             }
-    
-            // Return the parent element (or the drop target itself if it’s already a valid drop target)
-            return dropTarget;
+        });
+    }
+
+    // Function to find the valid parent for the drop event
+    function getValidParent(dropTarget) {
+        // If the dropTarget is a text node, get its parent element
+        if (dropTarget.nodeType === Node.TEXT_NODE) {
+            dropTarget = dropTarget.parentElement;
         }
-    </script>
+        // Return the parent element (or the drop target itself if it’s already a valid drop target)
+        return dropTarget;
+    }
+</script>
     
     
     

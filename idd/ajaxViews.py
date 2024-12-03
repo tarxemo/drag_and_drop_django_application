@@ -175,14 +175,16 @@ def update_parent_tag(request):
         element_id = request.POST.get('element_id')
         new_parent_id = request.POST.get('new_parent_id')
         template_id = request.POST.get('template_id')
-        
+        print(f"Element {element_id}")
+        print(f"New parent {new_parent_id}")
+        print(f"Template {template_id}")
         try:
             # Fetch the HtmlTag instance (the one being moved)
             tag = get_object_or_404(Tag, id=element_id, template_id=template_id)
 
             if new_parent_id:
                 # Fetch the new parent HtmlTag instance
-                new_parent = get_object_or_404(Tag, id=new_parent_id, template_id=template_id)
+                new_parent = get_object_or_404(Tag, id=new_parent_id, template__id=template_id)
                 tag.parent_tag = new_parent  # Update the parent tag
             else:
                 tag.parent_tag = None  # No parent tag (if dropped at the root)
