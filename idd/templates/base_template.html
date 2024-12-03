@@ -83,6 +83,7 @@
         <a href="{% url 'add_child_tag' template.id %}?tag_id={{tag.id}}" data-tooltip="Add Child Tag"><i class="fas fa-tags"></i></a>
         <a href="{% url 'edit_tag' template.id %}?tag_id={{tag.id}}" data-tooltip="Edit Tag"><i class="fas fa-edit"></i></a>
         <a href="{% url 'view_all_children' template.id %}?tag_id={{tag.id}}" data-tooltip="All Children Tags"><i class="fas fa-sitemap"></i></a>
+        <a href="{% url 'view_all_siblings' template.id %}?tag_id={{tag.id}}" data-tooltip="All Sibling Tags"><i class="fas fa-sitemap"></i></a>
         <a href="{% url 'view_all_classes' template.id %}?tag_id={{tag.id}}" data-tooltip="All Classes"><i class="fas fa-list"></i></a>
         <a href="{% url 'add_class' template.id %}?tag_id={{tag.id}}" data-tooltip="Add Class"><i class="fas fa-plus-circle"></i></a>
         <a href="{% url 'add_attribute' template.id %}?tag_id={{tag.id}}" data-tooltip="Add Attribute"><i class="fas fa-cogs"></i></a>
@@ -94,6 +95,9 @@
         <div class="flex">
             <!-- Left Panel for Navigation and Content -->
             <div class="w-1/2 p-4 border-r"> 
+                {% if tag.parent_tag %}
+                <a class="bg-green-300" href="{% url 'view_all_children' template.id %}?tag_id={{ tag.parent_tag.id }}">Parent Tag</a>
+                {% endif %}
                 {% block content %}
                 {% endblock %}
             </div>
