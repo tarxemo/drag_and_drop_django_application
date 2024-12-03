@@ -122,6 +122,16 @@
         <div id="tag-button" class="tag-item draggable" draggable="true">button</div>
     </div>
 
+    <script>
+        // Assuming you know the tag's ID
+        const tagId = "{{ tag.id }}"; // This value is rendered by Django
+        const element = document.getElementById(`${tagId}`);
+        
+        if (element) {
+            element.style.backgroundColor = "#FFE31A"; // Your desired color
+        }
+    </script>
+    
     <!-- Drag and Drop Script -->
     <script>
         let draggedElement = null;
