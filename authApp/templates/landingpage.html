@@ -42,8 +42,8 @@
 
       <!-- Buttons -->
       <div class="flex space-x-4">
-        <button class="px-4 py-2 bg-[#006A67] hover:bg-gray-600 rounded">Login</button>
-        <button class="px-4 py-2 bg-blue-500 hover:bg-blue-400 text-white rounded">Get Started</button>
+        <button class="px-4 py-2 bg-[#006A67] hover:bg-gray-600 rounded"><a href="{% url 'login'%}">Login</a></button>
+        <button class="px-4 py-2 bg-blue-500 hover:bg-blue-400 text-white rounded"><a href="{% url 'signup'%}">Register</a></button>
       </div>
     </div>
   </nav>
@@ -67,7 +67,7 @@
             <button type="button" class="
             mt-12 items-center px-12 py-4 rounded-full text-2xl
             bg-gradient-to-r from-purple-500 to-pink-500 hover:from-green-500 hover:to-blue-500">
-      Get Started
+      <a href="{% url 'login'%}">Get Started</a>
              </button>
          </div>
     
