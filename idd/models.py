@@ -82,7 +82,7 @@ class Attribute(models.Model):
         return f"{self.attribute_name}={self.attribute_value}"
 
 class Class(models.Model):
-    class_name = models.CharField(max_length=50)
+    class_name = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
         return self.class_name

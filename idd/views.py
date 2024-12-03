@@ -97,7 +97,8 @@ def add_class(request, template_id):
         class_names = request.POST.getlist("class_name") or json.loads(request.body.decode('utf-8')).get("class_name", [])
         
         for class_name in class_names:
-            TagClass.objects.get_or_create(tag=tag, class_name=class_name)
+            class_named, created = Class.objects.get_or_create(class_name=class_name)
+            TagClass.objects.create(tag=tag, class_name=class_named)
     
     data = get_common_data(template_id, request.GET.get('tag_id'))
     return render_with_context(request, 'add_class.html', data)
