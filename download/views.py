@@ -8,22 +8,7 @@ from django.http import HttpResponse
 from django.conf import settings
 from TB.utils import *
 from authApp.models import DynamicModelLog
-
 from idd.models import *
-import os
-import subprocess
-import tempfile
-import zipfile
-from io import BytesIO
-from django.http import HttpResponse
-from django.conf import settings
-from authApp.models import DynamicModelLog  # Import your DynamicModelLog model
-import os
-import subprocess
-import tempfile
-import zipfile
-from io import BytesIO
-from django.http import HttpResponse
 
 
 # Function to add content to views.py
