@@ -1,24 +1,13 @@
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from django.views import View
 from django.views.decorators.http import require_http_methods
 from django.middleware.csrf import get_token
 import json
 from .models import *
-from .utils import *
-from utils.form_utils import *
-from utils.templates_utils import *
-from utils.models_utils import *
+from TB.utils import *
 from django.shortcuts import render, redirect, get_object_or_404
 import joblib
 from django.views.decorators.csrf import csrf_exempt
-from django.core.files.storage import FileSystemStorage
-import os
-import tempfile
-import shutil
-import subprocess
-from io import BytesIO
-from django.http import FileResponse, HttpResponse
-from django.views import View
 
 
 
