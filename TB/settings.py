@@ -41,10 +41,8 @@ INSTALLED_APPS = [
     
     'authApp',
     'cruder',
-    # 'build',
     'database',
     'download',
-    'build1',
     'idd',
     
     'rest_framework',
