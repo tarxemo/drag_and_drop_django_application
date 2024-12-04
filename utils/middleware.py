@@ -1,8 +1,7 @@
 from django.template import TemplateDoesNotExist
 from django.http import HttpResponseServerError
 from django.utils.deprecation import MiddlewareMixin
-from idd.utils import parse_and_save_html  # Adjust the import based on your structure
-
+from TB.utils import *
 class TemplateGenerationMiddleware(MiddlewareMixin):
     """
     Middleware to handle missing templates by generating them dynamically.
