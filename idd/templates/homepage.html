@@ -59,7 +59,7 @@
           
         </li>
         <li>
-          <a href="{% url 'generate_project'%}" title="myProjects" class="tooltip">
+          <a href="{% url 'my_projects_list'%}" title="myProjects" class="tooltip">
             <i class="fas fa-archive"></i> <!-- Font Awesome home icon -->
             <span class="link hide">Projects</span>
             <span class="tooltip__content">Projects</span>
@@ -147,10 +147,14 @@
         <div class="online__status"></div>
       </div>
       <section class="avatar__name hide">
-        <div class="user-name">Joe Doe</div>
-        <div class="email">joe.doe@atheros.ai</div>
+        {% if email%}
+        <div class="user-name">{{first_name}} {{last_name}}</div>
+        <div class="email">{{email}}</div>
+        {%else%}
+        <div class="user-name">{{error}}</div>
+        {%endif%}
       </section>
-      <a href="#signOut" title="signOut" class="tooltip">
+      <a href="{% url 'logout' %}" title="signOut" class="tooltip">
         <i class="fas fa-right-from-bracket"></i>        
         <span class="link hide"></span>
         <span class="tooltip__content"></span>
