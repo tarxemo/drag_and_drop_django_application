@@ -12,7 +12,6 @@ try:
     
 except Exception as exception:
     print("REQUIRED LIBLARY MISSING: Please install  required libraries to run the project")
-    print(exception)
     print("")
 
 
