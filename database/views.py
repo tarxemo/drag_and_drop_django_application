@@ -6,8 +6,7 @@ from rest_framework import status
 import json
 from django.core.management import call_command
 from django.apps import apps
-from .database_helpers import *
-from .utils import *
+from TB.utils import *
 
 def makemigrations_and_migrate():
     call_command('makemigrations')

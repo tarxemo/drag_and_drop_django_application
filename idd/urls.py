@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import *
+from .ajaxViews import *
 
 urlpatterns = [
     path('homepage/', homepage , name='home'),
@@ -21,6 +22,7 @@ urlpatterns = [
     path('template/<int:template_id>/add-attribute/', add_attribute, name='add_attribute'),
     path('template/<int:template_id>/add-child-tag/', add_child_tag, name='add_child_tag'),
     path('template/<int:template_id>/view-all-children/', view_all_children, name='view_all_children'),
+    path('template/<int:template_id>/view-all-siblings/', view_all_siblings, name='view_all_siblings'),
     path('template/<int:template_id>/view-all-classes/', view_all_classes, name='view_all_classes'),
     path('template/<int:template_id>/view-all-attributes/', view_all_attributes, name='view_all_attributes'),
     path('template/<int:template_id>/edit_class/', edit_class, name='edit_class'),
@@ -43,11 +45,14 @@ urlpatterns = [
     path('crud/<str:table_name>/<int:pk>/edit/', edit_view, name='edit_view'),  # Edit an existing record
     path('crud/<str:table_name>/<int:pk>/delete/', delete_view, name='delete_view'),
     
+<<<<<<< HEAD
     path('generate-project/', generate_django_project, name='generate_project'),
     path('projects_listing/', project_list, name='my_projects_list'),
     path('projects_listing/register', project_register, name='register_project'),
     path('projects_listing/edit/<int:project_id>/', details_for_project, name='edit_project'), 
     path('projects_listing/delete/<int:project_id>/', delete_project, name='project_deletion'),    
+=======
+>>>>>>> origin/dev
     path('templates/', templates_gallery, name='templates_gallery'),
     path('templates/<int:template_id>/', one_template_detail, name='one_template_detail'),
     
