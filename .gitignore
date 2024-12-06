@@ -1,2 +1,3 @@
-__Pycache__/
-__pycache__/
+# Ignore Python bytecode
+**/__pycache__/
+**/*.pyc
