@@ -1,6 +1,5 @@
 from django.urls import path
 from .views import  *
-from utils.view_builder import *
 
 urlpatterns = [
     path('create_django_project/', create_django_project, name='create_django_project'),

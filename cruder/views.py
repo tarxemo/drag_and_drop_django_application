@@ -4,7 +4,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.apps import apps
-from .utils import *
+
+from TB.utils import *
 from datetime import datetime
 from django.core.files.uploadedfile import SimpleUploadedFile
 import json

@@ -1,31 +1,219 @@
-{% extends "homepage.html"%}
-{% load static%}
+{% extends "homepage.html" %}
+{% load static %}
+{% block title %}My Projects{% endblock %}
 
-    {%block title%}Generate Django Project{%endblock%}
+{% block content %}
+<div class="container mx-auto mt-5">
+    <div class="flex justify-between items-center mb-4">
+        <h1 class="text-3xl font-bold">My Projects</h1>
+        <button onclick="openModal()" 
+                class="bg-[#000B5B] text-white px-4 py-2 rounded hover:bg-[#003399]">
+            <i class="fas fa-plus"></i> Add New Project
+        </button>
+    </div>
+    
+    <!-- Projects Table -->
+    <div class="bg-white shadow-md rounded my-6">
+        <table class="min-w-full bg-white">
+            <thead class="bg-gray-800 text-white">
+                <tr>
+                    <th class="w-1/3 py-3 px-4 uppercase font-semibold text-sm">Project Name</th>
+                    <th class="w-1/3 py-3 px-4 uppercase font-semibold text-sm">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="text-gray-700">
+                {% for project in projects %}
+                <tr>
+                    <td class="w-auto text-center py-3 px-4">{{ project.name }}</td>
+                    <td class="w-full py-3 px-4 flex justify-between">
+                        <a onclick="openEdit()" href="{% url 'project_detail' project.id %}" class="text-blue-500 hover:text-blue-700">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <a href="{% url 'delete_project' project.id %}" class="text-red-500 hover:text-red-700 ml-4">
+                            <i class="fas fa-trash-alt"></i> Delete
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 
-{%block content%}
-    <div class="bg-gray-100 flex items-center justify-center min-h-screen">
-        <div class="bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
-            <h1 class="text-2xl font-semibold text-gray-800 text-center mb-6">Generate a New Django Project</h1>
-            <form method="post" class="space-y-6">
-                {% csrf_token %}
+<!-- Popup Modal -->
+<div id="projectModal" class="fixed z-50 inset-0 hidden bg-black bg-opacity-50 flex items-center justify-center">
+    <div class="bg-white w-1/2 rounded-lg shadow-lg p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-bold text-[#000B5B]">Register New Project</h2>
+            <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <!-- Registration Form -->
+        <form method="POST" action="{% url 'register_project' %}">
+            {% csrf_token %}
+            
+            <div class="mb-4">
+                <label for="title" class="block text-sm font-medium text-gray-700">Project Title</label>
+                <input type="text" id="title" name="title" 
+                       class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-[#000B5B] focus:border-[#FFE31A]" 
+                       required>
+            </div>
+            
+            <div class="mb-4">
+                <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                <textarea id="description" name="description" rows="3" 
+                          class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-[#000B5B] focus:border-[#FFE31A]" 
+                          required></textarea>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label for="project_name" class="block text-sm font-medium text-gray-700">Project Name</label>
-                    <input type="text" id="project_name" name="project_name" required
-                        class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200">
+                    <label for="start_date" class="block text-sm font-medium text-gray-700">Start Date</label>
+                    <input type="date" id="start_date" name="start_date" 
+                           class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-[#000B5B] focus:border-[#FFE31A]">
                 </div>
-                
                 <div>
-                    <label for="app_name" class="block text-sm font-medium text-gray-700">App Name</label>
-                    <input type="text" id="app_name" name="app_name" required
-                        class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200">
+                    <label for="completion_date" class="block text-sm font-medium text-gray-700">Expected Completion</label>
+                    <input type="date" id="completion_date" name="expected_completion_date" 
+                           class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-[#000B5B] focus:border-[#FFE31A]">
                 </div>
-                
-                <button type="submit"
-                        class="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-300 ease-in-out transform hover:scale-105">
-                    Generate Project
+            </div>
+            
+            <div class="mb-4">
+                <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                <select id="status" name="status" 
+                        class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-[#000B5B] focus:border-[#FFE31A]">
+                    <option value="planned">Planned</option>
+                    <option value="in_progress">In Progress</option>
+                    <option value="completed">Completed</option>
+                </select>
+            </div>
+            
+            <div class="mb-4">
+                <label for="priority" class="block text-sm font-medium text-gray-700">Priority</label>
+                <select id="priority" name="priority" 
+                        class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-[#000B5B] focus:border-[#FFE31A]">
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                </select>
+            </div>
+            
+            <div class="mb-4">
+                <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
+                <input type="text" id="category" name="category" 
+                       class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-[#000B5B] focus:border-[#FFE31A]">
+            </div>
+            
+            <div class="flex justify-end">
+                <button type="button" onclick="closeModal()" 
+                        class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 mr-2">
+                    Cancel
                 </button>
+                <button type="submit" 
+                        class="bg-[#FFE31A] text-[#000B5B] px-4 py-2 rounded hover:bg-yellow-400">
+                    Register
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Project -->
+<div id="edit" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen">
+        <div class="bg-white rounded-lg p-6 w-11/12 max-w-2xl">
+            <h2 class="text-2xl font-semibold text-[#000B5B] mb-4">Update Project</h2>
+            
+            <!-- Form -->
+            <form method="POST" action="{% url 'edit_project'%}">
+                {% csrf_token %}
+                <div class="space-y-4">
+                    <div>
+                        <label for="title" class="block text-[#000B5B] font-medium">Project Title</label>
+                        <input type="text" name="title" value="{{ project.title }}" required
+                               class="w-full p-2 border border-[#FFE3A1] rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFE3A1]">
+                    </div>
+                    
+                    <div>
+                        <label for="description" class="block text-[#000B5B] font-medium">Project Description</label>
+                        <textarea name="description" required
+                                  class="w-full p-2 border border-[#FFE3A1] rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFE3A1]">{{ project.description }}</textarea>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="start_date" class="block text-[#000B5B] font-medium">Start Date</label>
+                            <input type="date" name="start_date" value="{{ project.start_date }}"
+                                   class="w-full p-2 border border-[#FFE3A1] rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFE3A1]">
+                        </div>
+                        
+                        <div>
+                            <label for="expected_completion_date" class="block text-[#000B5B] font-medium">Expected Completion</label>
+                            <input type="date" name="expected_completion_date" value="{{ project.expected_completion_date }}"
+                                   class="w-full p-2 border border-[#FFE3A1] rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFE3A1]">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="status" class="block text-[#000B5B] font-medium">Status</label>
+                        <select name="status"
+                                class="w-full p-2 border border-[#FFE3A1] rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFE3A1]">
+                            <option value="planned" {% if project.status == 'planned' %}selected{% endif %}>Planned</option>
+                            <option value="in_progress" {% if project.status == 'in_progress' %}selected{% endif %}>In Progress</option>
+                            <option value="completed" {% if project.status == 'completed' %}selected{% endif %}>Completed</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="priority" class="block text-[#000B5B] font-medium">Priority</label>
+                        <select name="priority"
+                                class="w-full p-2 border border-[#FFE3A1] rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFE3A1]">
+                            <option value="high" {% if project.priority == 'high' %}selected{% endif %}>High</option>
+                            <option value="medium" {% if project.priority == 'medium' %}selected{% endif %}>Medium</option>
+                            <option value="low" {% if project.priority == 'low' %}selected{% endif %}>Low</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="category" class="block text-[#000B5B] font-medium">Category</label>
+                        <input type="text" name="category" value="{{ project.category }}"
+                               class="w-full p-2 border border-[#FFE3A1] rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFE3A1]">
+                    </div>
+                </div>
+                
+                <div class="mt-6 flex justify-end space-x-4">
+                    <button type="button" onclick="closeEdit()"
+                            class="bg-gray-300 text-[#000B5B] px-4 py-2 rounded-md hover:bg-gray-400 focus:outline-none">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                            class="bg-[#000B5B] text-white px-4 py-2 rounded-md hover:bg-[#FFE3A1] focus:outline-none">
+                        Update Project
+                    </button>
+                </div>
             </form>
         </div>
     </div>
-{%endblock%}
+</div>
+
+<script>
+    function openModal() {
+        document.getElementById('projectModal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+        document.getElementById('projectModal').classList.add('hidden');
+    }
+    function openEdit() {
+        document.getElementById("edit").classList.remove("hidden");
+    }
+
+    function closeEdit() {
+        document.getElementById("edit").classList.add("hidden");
+    }
+</script>
+
+{% endblock %}

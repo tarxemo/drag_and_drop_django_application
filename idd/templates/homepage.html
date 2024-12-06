@@ -1,168 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
-{% load static%}
 <head>
-  <meta charset="utf-8">
-  <title>Sidebar</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+  {% load static %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Responsive Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Work+Sans&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'css/style2.css' %}">
-  <script type="module" src="{% static 'js/homeBar.js' %}"></script>
-  <link rel="stylesheet" href="{% static 'js/homeBar.js' %}">
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('hidden');
+    }
+  </script>
 </head>
+<body class="bg-gray-100 font-sans text-gray-800">
 
-<body>
-  <div class="title">
-    <h2 class="text">Tarxemo Systems Solutions</h2>
-    <hr>
-    <hr>  
-  </div>
-  
-  <div class="dashboard-container">
-   <nav class="sidebar">
-    <div class="sidebar-top-wrapper">
-      <div class="sidebar-top">
-        <a href="#" class="logo__wrapper">
-          <img src="{%static 'logo.jpeg'%}" alt="Logo" class="logo-small">
-          <span class="sidebar-title hide">
-            Tarxemo
-          </span>
-        </a>
+  <!-- Container -->
+  <div class="flex flex-col h-screen lg:flex-row">
+
+    <!-- Mobile Navbar -->
+    <header class="bg-blue-900 text-white lg:hidden flex justify-between items-center px-4 py-3">
+      <div class="flex items-center">
+        <img src="{% static 'logo.jpeg' %}" alt="Logo" class="h-8 w-8 mr-2">
+        <span class="text-lg font-semibold">{{user.username}}</span>
       </div>
-      <div class="expand-btn">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M6.00979 2.72L10.3565 7.06667C10.8698 7.58 10.8698 8.42 10.3565 8.93333L6.00979 13.28"
-            stroke="#F4F6F9" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-      </div>
-    </div>
-    <div class="search__wrapper">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path
-          d="M9 9L13 13M5.66667 10.3333C3.08934 10.3333 1 8.244 1 5.66667C1 3.08934 3.08934 1 5.66667 1C8.244 1 10.3333 3.08934 10.3333 5.66667C10.3333 8.244 8.244 10.3333 5.66667 10.3333Z"
-          stroke="#989EB3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-      </svg>
-      <input type="search" placeholder="Search for anything...">
-    </div>
-    <div class="sidebar-links">
-      <h2>Main</h2>
-      <ul>
-        <li>
-          <a href="#home" title="Home" class="tooltip">
-            <i class="fas fa-home"></i> <!-- Font Awesome home icon -->
-            <span class="link hide">Home</span>
-            <span class="tooltip__content">Home</span>
-          </a>
-          
-        </li>
-        <li>
-          <a href="{% url 'generate_project'%}" title="myProjects" class="tooltip">
-            <i class="fas fa-archive"></i> <!-- Font Awesome home icon -->
-            <span class="link hide">Projects</span>
-            <span class="tooltip__content">Projects</span>
-          </a>
-        </li>
-        <li>
-          <a href="{% url 'templates_gallery' %}" title="explore" class="tooltip">
-            <i class="fas fa-compass"></i> <!-- Font Awesome home icon -->
-            <span class="link hide">Explore</span>
-            <span class="tooltip__content">Explore</span>
-          </a>
-        </li>
-        <li>
-          <a href="#Apps" title="Apps" class="tooltip">
-            <i class="fa-brands fa-centos"></i> <!-- Font Awesome home icon -->
-            <span class="link hide">My Applications</span>
-            <span class="tooltip__content">My Applications</span>
-          </a>
-        </li>
-        <li>
-          <a href="{% url 'template_list'%}" title="Templates" class="tooltip">
-            <i class="fa-brands fa-html5"></i><!-- Font Awesome home icon -->
-            <span class="link hide">Templates</span>
-            <span class="tooltip__content">Templates</span>
-          </a>
-        </li>
-      </ul>
-    </div>
-    <div class="sidebar-links">
-      <h2>Communication</h2>
-      <ul>
-        <li>
-          <a href="#Team" title="Team" class="tooltip">
-            <i class="fas fa-users"></i> <!-- Font Awesome home icon -->
-            <span class="link hide">Team</span>
-            <span class="tooltip__content">Team</span>
-          </a>
-        </li>
-        <li>
-          <a href="#notification" title="notification" class="tooltip">
-            <i class="fas fa-bell"></i> <!-- Font Awesome home icon -->
-            <span class="link hide">Notification</span>
-            <span class="tooltip__content">Notification</span>
-          </a>
-      </ul>
-    </div>
-    <div class="sidebar__action__wrapper">
-      <div class="sidebar__action">
-        <div class="progress-bar">
-          <div class="progress-bar__value">
-            60%
-          </div>
+      <button class="text-white focus:outline-none" onclick="toggleSidebar()">
+        <i class="fas fa-bars text-xl"></i>
+      </button>
+    </header>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="hidden lg:block lg:w-64 bg-blue-900 text-white min-h-screen lg:relative lg:flex-shrink-0">
+      <div class="flex flex-col h-full">
+        <!-- Sidebar Header -->
+        <div class="flex items-center justify-between px-4 py-4 bg-blue-800">
+          <img src="{% static 'logo.jpeg' %}" alt="Logo" class="h-8 w-8">
+          <span class="text-lg font-semibold">Tarxemo</span>
         </div>
-        <h2>Tasks Completed</h2>
-        <p>
-          You have completed 60% of your project developmment
-        </p>
-        <button>
-          Proceed with Tasks
-        </button>
-      </div>
-    </div>
-    <div class="sidebar-links bottom-links">
-      <ul>
-        <li>
-          <a href="#settings" title="settings" class="tooltip">
-            <i class="fas fa-cogs"></i> <!-- Font Awesome home icon -->
-            <span class="link hide">Settings</span>
-            <span class="tooltip__content">Settings</span>
-          </a>
-        </li>
-        <li>
-          <a href="#help" title="help" class="tooltip">
-            <i class="fas fa-info-circle"></i> <!-- Font Awesome home icon -->
-            <span class="link hide">Help</span>
-            <span class="tooltip__content">Help</span>
-          </a>
-        </li>
-      </ul>
-    </div>
-    <div class="divider"></div>
-    <div class="sidebar__profile">
-      <div class="avatar__wrapper">
-        <img class="avatar" src="{%static 'logo.jpeg'%}" alt="Joe Doe Picture">
-        <div class="online__status"></div>
-      </div>
-      <section class="avatar__name hide">
-        <div class="user-name">Joe Doe</div>
-        <div class="email">joe.doe@atheros.ai</div>
-      </section>
-      <a href="#signOut" title="signOut" class="tooltip">
-        <i class="fas fa-right-from-bracket"></i>        
-        <span class="link hide"></span>
-        <span class="tooltip__content"></span>
-      </a>
-      </a>
-    </div>
-   </nav>
-   <main class="content">
-      {% block content%}
-      {% endblock %}
-   </main>
-</div>  
-</body>
 
+        <!-- Search Bar -->
+        <div class="relative px-4 mt-4">
+          <input type="text" placeholder="Search..." class="w-full py-2 pl-10 pr-4 text-sm rounded-lg bg-blue-700 text-white focus:ring-2 focus:ring-yellow-500 outline-none">
+          <i class="fas fa-search absolute left-5 top-3 text-white"></i>
+        </div>
+
+        <!-- Links -->
+        <nav class="mt-6 flex-grow">
+          <ul>
+            <!-- Main Section -->
+            <li class="text-xs uppercase font-semibold text-gray-400 px-4 mb-2">Main</li>
+            <li>
+              <a href="#home" class="flex items-center px-4 py-2 hover:bg-blue-700 transition">
+                <i class="fas fa-home mr-3"></i> <span>Home</span>
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'templates_gallery' %}" class="flex items-center px-4 py-2 hover:bg-blue-700 transition">
+                <i class="fas fa-compass mr-3"></i> <span>Explore</span>
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'my_projects_list'%}" title="myProjects" class="tooltip">
+                <i class="fas fa-archive"></i> <!-- Font Awesome home icon -->
+                <span class="link hide">Projects</span>
+                <span class="tooltip__content">Projects</span>
+              </a>
+            </li>
+        
+            <!-- Additional Links in Main -->
+            <li>
+              <a href="#Apps" title="Apps" class="tooltip flex items-center px-4 py-2 hover:bg-blue-700 transition">
+                <i class="fa-brands fa-centos mr-3"></i>
+                 <span class="tooltip__content">My Applications</span>
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'template_list'%}" title="Templates" class="tooltip flex items-center px-4 py-2 hover:bg-blue-700 transition">
+                <i class="fa-brands fa-html5 mr-3"></i>
+                 <span class="tooltip__content">Templates</span>
+              </a>
+            </li>
+        
+            <!-- Communication Section -->
+            <li class="text-xs uppercase font-semibold text-gray-400 px-4 mt-4 mb-2">Communication</li>
+            <li>
+              <a href="#Team" class="flex items-center px-4 py-2 hover:bg-blue-700 transition">
+                <i class="fas fa-users mr-3"></i> <span>Team</span>
+              </a>
+            </li>
+            <li>
+              <a href="#notification" class="flex items-center px-4 py-2 hover:bg-blue-700 transition">
+                <i class="fas fa-bell mr-3"></i> <span>Notification</span>
+              </a>
+            </li>
+        
+            <!-- Sidebar Action Section -->
+            
+            <!-- Bottom Links Section -->
+            <div class="sidebar-links bottom-links">
+              <ul>
+                <li>
+                  <a href="#settings" title="Settings" class="tooltip flex items-center px-4 py-2 hover:bg-blue-700 transition">
+                    <i class="fas fa-cogs mr-3"></i>
+                    <span class="link hide">Settings</span>
+                   </a>
+                </li>
+                <li>
+                  <a href="#help" title="Help" class="tooltip flex items-center px-4 py-2 hover:bg-blue-700 transition">
+                    <i class="fas fa-info-circle mr-3"></i>
+                     <span class="tooltip__content">Help</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+        
+            <!-- Divider and Profile Section -->
+            <div class="divider"></div>
+            <div class="sidebar__profile">
+              <!-- <div class="avatar__wrapper">
+                <img class="avatar" src="{% static 'logo.jpeg' %}" alt="Joe Doe Picture">
+                <div class="online__status"></div>
+              </div> -->
+              <section class="avatar__name hide">
+                <div class="user-name">{{user.username}}</div>
+               </section>
+              <a  href="{% url 'logout' %}"  title="Sign Out" class="tooltip">
+                <i class="fas fa-right-from-bracket"></i>
+                <span class="link hide"></span>
+                <span class="tooltip__content">Sign Out</span>
+              </a>
+            </div>
+          </ul>
+        </nav>
+        
+
+        <!-- Bottom Links -->
+         
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-6 overflow-y-auto">
+      <h1 class="text-2xl font-bold text-blue-900">Welcome to Tarxemo Systems</h1>
+      <p class="mt-4 text-gray-700 bg-[#000B58]">
+        Here’s your project overview and team updates.
+      </p>
+      {% block content %}
+      {% endblock %}
+    </main>
+  </div>
+
+</body>
 </html>
