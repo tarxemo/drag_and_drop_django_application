@@ -1,35 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Templates Gallery</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary-dark: #000B58;
-            --primary-light: #FFE31A;
-        }
-        .hover-shadow {
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        .hover-shadow:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-        }
-    </style>
-</head>
-<body class="bg-gray-100 text-gray-800">
+{% extends 'homepage.html'%}
+{% load static%}
+{%block title%}Templates Gallery {%endblock%}
 
-    <header class="bg-[var(--primary-dark)] text-white py-6 shadow-lg">
-        <div class="container mx-auto px-4">
+{%block content%}
+<div class="bg-gray-100 text-gray-800">
+
+    <header class="bg-[#000B58] text-white py-6 shadow-lg">
+        <div class="container mx-auto px-4 ">
             <h1 class="text-3xl font-bold">HTML Templates Gallery</h1>
             <p class="text-lg text-[var(--primary-light)]">Explore and Interact with Beautiful HTML Pages</p>
         </div>
     </header>
 
-    <main class="container mx-auto px-4 py-10">
+    <div class="container mx-auto px-4 py-10">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {% for template in templates %}
             <div class="bg-white rounded-lg shadow-md hover-shadow p-6 relative">
@@ -46,7 +29,15 @@
                     <button class="flex items-center gap-2 text-[var(--primary-light)]">
                         <i class="fas fa-thumbs-up"></i> 
                         <span>Like</span>
-                    </button>
+                    </button> 
+                    {{template.first_tag.id}}
+                    {% if parent_id  %}
+                    <a href="{% url 'templates_gallery' %}?destination_id={{ parent_id }}&source_id={{ template.id }}" class="flex items-center gap-2 text-[var(--primary-dark)] hover:text-[var(--primary-light)]">
+                        <i class="fa fa-check-square"></i> 
+                        <span>Select</span>
+                    </a> 
+                    {% endif %}
+
 
                     <span class="text-sm text-gray-500">Likes: <span class="font-bold">0</span></span>
                 </div>
@@ -63,7 +54,7 @@
             </div>
             {% endfor %}
         </div>
-    </main>
+    </div>
 
     <footer class="bg-gray-800 text-white py-4">
         <div class="container mx-auto px-4">
@@ -71,5 +62,6 @@
         </div>
     </footer>
 
-</body>
-</html>
+</div>
+{%endblock%}
+

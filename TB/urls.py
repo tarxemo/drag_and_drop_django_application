@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from authApp.views import landingpage
 
 urlpatterns = [
     path('hidfor/', admin.site.urls),
@@ -26,5 +27,5 @@ urlpatterns = [
     path('models/', include("database.urls")),
     path('download/', include("download.urls")),
     path('idd/', include("idd.urls")),
-    # path('', include("build1.urls"))
+    path("", landingpage, name="landingpage"),
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

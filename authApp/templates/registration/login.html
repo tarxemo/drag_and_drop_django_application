@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="max-w-lg mx-auto p-8 bg-white rounded-lg shadow-lg mt-12">
+    <h2 class="text-center text-3xl  text-black font-semibold p-4 rounded-lg mb-6">Login</h2>
+    
+    <form method="post">
+      {% csrf_token %}
+      
+      <div class="space-y-6">
+        <!-- Username Field -->
+        <div class="space-y-2">
+          <label for="{{ form.username.id_for_label }}" class="block text-lg font-medium text-gray-700">Username</label>
+          <div class="relative">
+            <!-- Manually adding the class to the username field -->
+            <input type="text" name="{{ form.username.name }}" 
+            
+            class="block w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+            id="{{ form.username.id_for_label }}">
+          </div>
+          {% if form.username.help_text %}
+            <p class="text-sm text-gray-500">{{ form.username.help_text }}</p>
+          {% endif %}
+          {% if form.username.errors %}
+            <div class="text-sm text-red-500">
+              {% for error in form.username.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Password Field -->
+        <div class="space-y-2">
+          <label for="{{ form.password.id_for_label }}" class="block text-lg font-medium text-gray-700">Password</label>
+          <div class="relative">
+            <!-- Manually adding the class to the password field -->
+            <input type="password"
+             name="{{ form.password.name }}" 
+            
+             class="block w-full p-2 border border-gray-300
+              rounded-md focus:outline-none focus:ring-2 
+              focus:ring-blue-500" 
+              id="{{ form.password.id_for_label }}"
+              />
+          </div>
+          {% if form.password.help_text %}
+            <p class="text-sm text-gray-500">{{ form.password.help_text }}</p>
+          {% endif %}
+          {% if form.password.errors %}
+            <div class="text-sm text-red-500">
+              {% for error in form.password.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <button type="submit" class="w-full mt-6 py-3 bg-blue-900 text-yellow-400 font-semibold text-lg rounded-md hover:bg-yellow-400 hover:text-blue-900 transition-all">
+        Login
+      </button>
+    </form>
+
+    <div class="mt-4 text-center">
+      <p class="text-sm text-gray-600">Don't have an account? <a href="{% url 'signup' %}" class="text-blue-600 hover:text-blue-500">Sign up</a></p>
+    </div>
+  </div>
+{% endblock %}
