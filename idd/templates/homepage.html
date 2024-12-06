@@ -23,7 +23,7 @@
     <header class="bg-blue-900 text-white lg:hidden flex justify-between items-center px-4 py-3">
       <div class="flex items-center">
         <img src="{% static 'logo.jpeg' %}" alt="Logo" class="h-8 w-8 mr-2">
-        <span class="text-lg font-semibold">Tarxemo</span>
+        <span class="text-lg font-semibold">{{user.username}}</span>
       </div>
       <button class="text-white focus:outline-none" onclick="toggleSidebar()">
         <i class="fas fa-bars text-xl"></i>
@@ -58,6 +58,13 @@
             <li>
               <a href="{% url 'templates_gallery' %}" class="flex items-center px-4 py-2 hover:bg-blue-700 transition">
                 <i class="fas fa-compass mr-3"></i> <span>Explore</span>
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'my_projects_list'%}" title="myProjects" class="tooltip">
+                <i class="fas fa-archive"></i> <!-- Font Awesome home icon -->
+                <span class="link hide">Projects</span>
+                <span class="tooltip__content">Projects</span>
               </a>
             </li>
         
@@ -116,9 +123,9 @@
                 <div class="online__status"></div>
               </div> -->
               <section class="avatar__name hide">
-                <div class="user-name">Joe Doe</div>
+                <div class="user-name">{{user.username}}</div>
                </section>
-              <a href="#signOut" title="Sign Out" class="tooltip">
+              <a  href="{% url 'logout' %}"  title="Sign Out" class="tooltip">
                 <i class="fas fa-right-from-bracket"></i>
                 <span class="link hide"></span>
                 <span class="tooltip__content">Sign Out</span>

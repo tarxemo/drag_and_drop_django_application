@@ -18,22 +18,26 @@
             <thead class="bg-gray-800 text-white">
                 <tr>
                     <th class="w-1/3 py-3 px-4 uppercase font-semibold text-sm">Project Name</th>
+                    <th class="w-1/3 py-3 px-4 uppercase font-semibold text-sm">Project Status</th>
                     <th class="w-1/3 py-3 px-4 uppercase font-semibold text-sm">Actions</th>
                 </tr>
             </thead>
             <tbody class="text-gray-700">
                 {% for project in projects %}
+                {%if  project.title %}
                 <tr>
-                    <td class="w-auto text-center py-3 px-4">{{ project.name }}</td>
+                    <td class="w-auto text-center py-3 px-4">{{ project.title }}</td>
+                    <td class="w-auto text-center py-3 px-4">{{ project.status }}</td>
                     <td class="w-full py-3 px-4 flex justify-between">
-                        <a onclick="openEdit()" href="{% url 'project_detail' project.id %}" class="text-blue-500 hover:text-blue-700">
+                        <button onclick="openEdit('{{ project.id }}')"  class="text-blue-500 hover:text-blue-700">
                             <i class="fas fa-edit"></i> Edit
-                        </a>
-                        <a href="{% url 'delete_project' project.id %}" class="text-red-500 hover:text-red-700 ml-4">
+                        </button>
+                        <button onclick="openDelete('{{ project.id }}')" class="text-red-500 hover:text-red-700 ml-4">
                             <i class="fas fa-trash-alt"></i> Delete
                         </a>
                     </td>
                 </tr>
+                {% endif%}
                 {% endfor %}
             </tbody>
         </table>
@@ -128,7 +132,8 @@
             <h2 class="text-2xl font-semibold text-[#000B5B] mb-4">Update Project</h2>
             
             <!-- Form -->
-            <form method="POST" action="{% url 'edit_project'%}">
+
+            <form method="POST" action="#">
                 {% csrf_token %}
                 <div class="space-y-4">
                     <div>
@@ -199,21 +204,63 @@
     </div>
 </div>
 
+<div id="delete" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen">
+        <div class="bg-white rounded-lg p-6 w-11/12 max-w-2xl">
+            <h2 class="text-2xl font-semibold text-[#000B5B] mb-4">Confirm Delete</h2>
+
+            <form method="POST" id="deleteForm" class="inline-block" action="">
+                {% csrf_token %} 
+                <p class="text-lg text-gray-700 mb-4">Are you sure you want to delete the project "<span class="font-semibold">{{ project.title }}</span>"?</p>
+                <div class="flex space-x-4">
+                    <button type="button"  class="px-4 py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400">
+                        Yes, delete
+                    </button>
+                    <a href="{% url 'my_projects_list'%}" onclick="window.history.back();" ondblclick="closeDelete()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
+    function openEdit(projectId) {
+        const editModal = document.getElementById('edit');
+        const editForm = editModal.querySelector('form');
+        deleteForm.action = `{% url 'edit_project' 0 %}`.replace('0', projectId);
+        document.getElementById("edit").classList.remove("hidden");
+    }
+    
+
+    function closeEdit() {
+        const editModal = document.getElementById('edit');
+        editModal.classList.add('hidden');
+    }
+
+    function openDelete(projectId) {
+        const deleteModal = document.getElementById('delete');
+        const deleteForm = deleteModal.querySelector('form');
+        deleteForm.action = `{% url 'project_deletion' 0 %}`.replace('0', projectId);
+        document.getElementById("delete").classList.remove("hidden");
+    }
+
+    function closeDelete() {
+        const deleteModal = document.getElementById('delete');
+        deleteModal.classList.add('hidden');
+    }
+
     function openModal() {
-        document.getElementById('projectModal').classList.remove('hidden');
+        const projectModal = document.getElementById('projectModal');
+        projectModal.classList.remove('hidden');
     }
 
     function closeModal() {
-        document.getElementById('projectModal').classList.add('hidden');
-    }
-    function openEdit() {
-        document.getElementById("edit").classList.remove("hidden");
-    }
-
-    function closeEdit() {
-        document.getElementById("edit").classList.add("hidden");
+        const projectModal = document.getElementById('projectModal');
+        projectModal.classList.add('hidden');
     }
 </script>
+
 
 {% endblock %}

@@ -45,6 +45,10 @@ urlpatterns = [
     path('crud/<str:table_name>/<int:pk>/edit/', edit_view, name='edit_view'),  # Edit an existing record
     path('crud/<str:table_name>/<int:pk>/delete/', delete_view, name='delete_view'),
     
+    path('projects_listing/', project_list, name='my_projects_list'),
+    path('projects_listing/register', project_register, name='register_project'),
+    path('projects_listing/edit/<int:project_id>/', details_for_project, name='edit_project'), 
+    path('projects_listing/delete/<int:project_id>/', delete_project, name='project_deletion'),    
     path('templates/', templates_gallery, name='templates_gallery'),
     path('templates/<int:template_id>/', one_template_detail, name='one_template_detail'),
     

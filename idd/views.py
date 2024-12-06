@@ -11,9 +11,104 @@ from django.template import Template as Django_template, Context as Django_conte
 
 
 def homepage(request):
-    return render(request,'homepage.html')
+    if request.user.is_authenticated:
+        user = request.user  
+        context = {
+            'email': user.email,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+        }
+    else:
+        context = {
+            'error': 'User is not authenticated.',
+        }
+    
+    return render(request, 'homepage.html', context)
+
+def project_register(request):
+    if request.method == "POST":
+        
+        title = request.POST.get('title')
+        description = request.POST.get('description')
+        start_date = request.POST.get('start_date')
+        expected_completion_date = request.POST.get('expected_completion_date')
+        status = request.POST.get('status')
+        priority = request.POST.get('priority')
+        category = request.POST.get('category')
+
+        
+        if not title or not description:
+            return HttpResponse("Title and Description are required.", status=400)
+
+        
+        project = Project(
+            title=title,
+            description=description,
+            start_date=start_date,
+            expected_completion_date=expected_completion_date,
+            status=status,
+            priority=priority,
+            category=category,
+            owner=request.user  
+        )
+        project.save()
+        return redirect('my_projects_list')
+
+    return render(request, 'projects_list.html')
 
 
+def details_for_project(request, project_id):
+    project = get_object_or_404(Project, id=project_id, owner=request.user)
+    
+    if request.method == "POST":
+        # Manually fetch the updated form data
+        title = request.POST.get('title')
+        description = request.POST.get('description')
+        start_date = request.POST.get('start_date')
+        expected_completion_date = request.POST.get('expected_completion_date')
+        status = request.POST.get('status')
+        priority = request.POST.get('priority')
+        category = request.POST.get('category')
+
+        # Perform basic validation (example: check if required fields are filled)
+        if not title or not description:
+            return HttpResponse("Title and Description are required.", status=400)
+
+        # Update the project instance with new data
+        project.title = title
+        project.description = description
+        project.start_date = start_date
+        project.expected_completion_date = expected_completion_date
+        project.status = status
+        project.priority = priority
+        project.category = category
+        project.save()
+
+        return redirect('my_projects_list')
+    
+    return render(request, 'project_detail.html', {'project': project})
+
+
+def project_list(request):
+    projects = Project.objects.filter(owner=request.user)  
+
+    # Pass the projects to the template for rendering
+    return render(request, 'projects_list.html', {'projects': projects})
+
+    
+def delete_project(request, project_id):
+   
+    project = get_object_or_404(Project, id=project_id, owner=request.user)
+    # project2 = Project.object.get(id=project_id)
+    
+    if request.method == "POST":
+        project.delete()  
+        return redirect('my_projects_list')  
+    
+    return render(request, 'delete_project.html', {'project': project})
+  
+    
+    
 def template_list(request):
     templates = Template.objects.all()
     return render(request, 'template_list.html', {'templates': templates})
