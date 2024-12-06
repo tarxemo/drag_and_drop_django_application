@@ -4,24 +4,50 @@ from django.dispatch import receiver
 from authApp.models import CustomUser  
 from django.db import transaction
 
+
+class Project(models.Model):
+    STATUS_CHOICES = [
+        ('planned', 'Planned'),
+        ('in_progress', 'In Progress'),
+        ('completed', 'Completed'),
+    ]
+    
+    PRIORITY_CHOICES = [
+        ('high', 'High'),
+        ('medium', 'Medium'),
+        ('low', 'Low'),
+    ]
+    
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    start_date = models.DateField(null=True, blank=True)
+    expected_completion_date = models.DateField(null=True, blank=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='planned')
+    priority = models.CharField(max_length=20, choices=PRIORITY_CHOICES, default='medium')
+    category = models.CharField(max_length=100, blank=True)
+    owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="projects")
+    applications = models.ManyToManyField('Application', related_name='projects')  # Many-to-many relationship
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.title
 class Application(models.Model):
     name = models.CharField(max_length=50)
     owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="applications")
     
 
-
-class TemplateCategory(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-
-    def __str__(self):
-        return self.name
-    
 class Template(models.Model):
+    CATEGORY_CHOICES = [
+        ('CATEGORY_1', 'Category 1'),
+        ('CATEGORY_2', 'Category 2'),
+        ('CATEGORY_3', 'Category 3'),
+    ]
     application = models.ForeignKey(Application, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, unique=True)
-    category = models.ForeignKey(TemplateCategory, on_delete=models.SET_NULL, null=True)
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, null=True, blank=True)
     owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="user", null=True)
-    
+
     def __str__(self):
         return self.name
 
@@ -122,31 +148,4 @@ class Book(models.Model):
 #     def __str__(self):
 #         return f"{self.name} ({self.category.name if self.category else 'Uncategorized'})"
 
-    
-    
-class Project(models.Model):
-    STATUS_CHOICES = [
-        ('planned', 'Planned'),
-        ('in_progress', 'In Progress'),
-        ('completed', 'Completed'),
-    ]
-    
-    PRIORITY_CHOICES = [
-        ('high', 'High'),
-        ('medium', 'Medium'),
-        ('low', 'Low'),
-    ]
-    
-    title = models.CharField(max_length=200)
-    description = models.TextField()
-    start_date = models.DateField(null=True, blank=True)
-    expected_completion_date = models.DateField(null=True, blank=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='planned')
-    priority = models.CharField(max_length=20, choices=PRIORITY_CHOICES, default='medium')
-    category = models.CharField(max_length=100, blank=True)
-    owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="projects")
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    
-    def __str__(self):
-        return self.title
+
