@@ -2,15 +2,52 @@ from django.db import models
 from django.db.models.signals import pre_save, post_delete
 from django.dispatch import receiver
 from authApp.models import CustomUser  
+from django.db import transaction
 
+
+class Project(models.Model):
+    STATUS_CHOICES = [
+        ('planned', 'Planned'),
+        ('in_progress', 'In Progress'),
+        ('completed', 'Completed'),
+    ]
+    
+    PRIORITY_CHOICES = [
+        ('high', 'High'),
+        ('medium', 'Medium'),
+        ('low', 'Low'),
+    ]
+    
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    start_date = models.DateField(null=True, blank=True)
+    expected_completion_date = models.DateField(null=True, blank=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='planned')
+    priority = models.CharField(max_length=20, choices=PRIORITY_CHOICES, default='medium')
+    category = models.CharField(max_length=100, blank=True)
+    owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="projects")
+    applications = models.ManyToManyField('Application', related_name='projects')  # Many-to-many relationship
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.title
 class Application(models.Model):
     name = models.CharField(max_length=50)
     owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="applications")
     
+
 class Template(models.Model):
+    CATEGORY_CHOICES = [
+        ('CATEGORY_1', 'Category 1'),
+        ('CATEGORY_2', 'Category 2'),
+        ('CATEGORY_3', 'Category 3'),
+    ]
     application = models.ForeignKey(Application, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, unique=True)
-    
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, null=True, blank=True)
+    owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="user", null=True)
+
     def __str__(self):
         return self.name
 
@@ -44,7 +81,27 @@ class Tag(models.Model):
     def __str__(self):
         return f"{self.tag_name} - {self.django_tag_type} at position {self.position}"
 
-    
+    def save(self, *args, **kwargs):
+        with transaction.atomic():
+            if self.pk:
+                existing_tag = Tag.objects.get(pk=self.pk)
+                if existing_tag.parent_tag != self.parent_tag:
+                    max_position = (
+                        Tag.objects.filter(parent_tag=self.parent_tag)
+                        .aggregate(max_position=models.Max('position'))
+                        .get('max_position')
+                    )
+                    self.position = (max_position or 0) + 1
+            else:
+                max_position = (
+                    Tag.objects.filter(parent_tag=self.parent_tag)
+                    .aggregate(max_position=models.Max('position'))
+                    .get('max_position')
+                )
+                self.position = (max_position or 0) + 1
+
+            super().save(*args, **kwargs)
+
 class Image(models.Model):
     image = models.ImageField(upload_to="images/")
     tag = models.OneToOneField(Tag,related_name='image', on_delete=models.CASCADE)
@@ -61,7 +118,7 @@ class Attribute(models.Model):
         return f"{self.attribute_name}={self.attribute_value}"
 
 class Class(models.Model):
-    class_name = models.CharField(max_length=50)
+    class_name = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
         return self.class_name
@@ -82,18 +139,13 @@ class Book(models.Model):
     name = models.CharField(max_length=50)
     
     
-class TemplateCategory(models.Model):
-    name = models.CharField(max_length=50, unique=True)
 
-    def __str__(self):
-        return self.name
+# class TemplatesOwnership(models.Model):
+#     application = models.ForeignKey(Application, on_delete=models.CASCADE)
+#     name = models.CharField(max_length=100)  # Remove unique=True
+#     category = models.ForeignKey(TemplateCategory, on_delete=models.SET_NULL, null=True, related_name="templates")
 
-class TemplatesOwnership(models.Model):
-    application = models.ForeignKey(Application, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)  # Remove unique=True
-    category = models.ForeignKey(TemplateCategory, on_delete=models.SET_NULL, null=True, related_name="templates")
+#     def __str__(self):
+#         return f"{self.name} ({self.category.name if self.category else 'Uncategorized'})"
 
-    def __str__(self):
-        return f"{self.name} ({self.category.name if self.category else 'Uncategorized'})"
 
-    

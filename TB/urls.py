@@ -28,5 +28,4 @@ urlpatterns = [
     path('download/', include("download.urls")),
     path('idd/', include("idd.urls")),
     path("", landingpage, name="landingpage"),
-    # path('', include("build1.urls"))
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

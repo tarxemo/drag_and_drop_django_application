@@ -60,7 +60,7 @@
                 selectedClasses.push($(this).val());
             });
             $.ajax({
-                url: `/template/{{ template.id }}/add-class/?tag_id={{ tag.id }}`,  // URL to your add_class view
+                url: `/idd/template/{{ template.id }}/add-class/?tag_id={{ tag.id }}`,  // URL to your add_class view
                 type: 'POST',
                 data: JSON.stringify({
                     'class_name': selectedClasses

@@ -9,6 +9,7 @@
 
 
 # class RegisterView(generics.CreateAPIView):
+
 #     queryset = CustomUser.objects.all()
 #     serializer_class = UserSerializer
 #     permission_classes = [permissions.AllowAny]
@@ -44,6 +45,7 @@
 # In views.py
 from django.shortcuts import render, redirect
 from .forms import CustomUserCreationForm
+from django.contrib.auth import logout
 
 def signup(request):
     if request.method == "POST":
@@ -59,3 +61,7 @@ def signup(request):
 
 def landingpage(request):
     return render(request, 'landingpage.html')
+
+def user_logout(request):
+    logout(request)
+    return redirect('login') 
