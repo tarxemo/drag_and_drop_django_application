@@ -34,6 +34,8 @@ class Project(models.Model):
         return self.title
 class Application(models.Model):
     name = models.CharField(max_length=50)
+    description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
     owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="applications")
     
 

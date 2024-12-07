@@ -98,6 +98,9 @@ def project_list(request):
     # Pass the projects to the template for rendering
     return render(request, 'projects_list.html', {'projects': projects})
 
+def register_app(request):
+    return render(request, 'app_register.html')
+
     
 def delete_project(request, project_id):
    
