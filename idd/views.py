@@ -60,8 +60,12 @@ def project_register(request):
 def details_for_project(request, project_id):
     project = get_object_or_404(Project, id=project_id, owner=request.user)
     
-    if request.method == "POST":
-        # Manually fetch the updated form data
+    
+    return render(request, 'edit_Project.html', {'project': project})
+
+def update_project_details(request,project_id):
+     if request.method == "POST":
+        project = get_object_or_404(Project, id=project_id, owner=request.user)
         title = request.POST.get('title')
         description = request.POST.get('description')
         start_date = request.POST.get('start_date')
@@ -85,9 +89,8 @@ def details_for_project(request, project_id):
         project.save()
 
         return redirect('my_projects_list')
-    
-    return render(request, 'project_detail.html', {'project': project})
-
+     return render(request, 'edit_Project.html', {'project': project})
+ 
 
 def project_list(request):
     projects = Project.objects.filter(owner=request.user)  
@@ -107,6 +110,11 @@ def delete_project(request, project_id):
     
     return render(request, 'delete_project.html', {'project': project})
   
+  
+def project_details(request, projectId):
+    detail = get_object_or_404(Project, id=projectId)
+      
+    return render(request,"details.html", {'detail': detail})
     
     
 def template_list(request):

@@ -46,10 +46,11 @@ urlpatterns = [
     path('crud/<str:table_name>/<int:pk>/delete/', delete_view, name='delete_view'),
     
     path('projects_listing/', project_list, name='my_projects_list'),
-    path('projects_listing/register', project_register, name='register_project'),
-    path('projects_listing/edit/<int:project_id>/', details_for_project, name='edit_project'), 
+    path('projects_listing/register', project_register, name='register_project'), 
     path('projects_listing/delete/<int:project_id>/', delete_project, name='project_deletion'),    
     path('templates/', templates_gallery, name='templates_gallery'),
     path('templates/<int:template_id>/', one_template_detail, name='one_template_detail'),
-    
+    path("project_Details/<int:projectId>/" , project_details, name='project_information'),
+    path('project_Details/project_Update/<int:project_id>/', update_project_details, name="Update_changes"),
+    path('project_Details/edit/<int:project_id>/', details_for_project, name='edit_project'),
 ]
