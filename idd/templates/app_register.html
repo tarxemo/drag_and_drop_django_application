@@ -16,24 +16,23 @@
             <span class="text-[#FFE31A] font-semibold">*</span> are required.
         </p>
 
-        <!-- Form -->
+        
         <form action="" method="POST" class="space-y-6">
             {% csrf_token %}
 
-            <!-- Select Project -->
             <div>
                 <label for="project" class="block text-sm font-medium text-gray-700 p-3">
                     Select Project <span class="text-[#FFE31A]">*</span>
                 </label>
-                <select id="template-category" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-3 focus:border-[#FFE31A]" name="category" required>
-                    <option value="" disabled selected>Select a category</option>
-                    {% for category in categories %}
-                        <option value="{{ category.id }}">{{ category.name }}</option>
+                <select id="project" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-3 focus:border-[#FFE31A]" name="project" required>
+                    <option value="" disabled selected>Select a project</option>
+                    {% for project in projects %}
+                        <option value="{{ project.id }}">{{ project.title }}</option>
                     {% endfor %}
                 </select>
             </div>
 
-            <!-- App Name -->
+            
             <div>
                 <label for="app_name" class="block text-sm font-medium text-gray-700">
                     App Name <span class="text-[#FFE31A]">*</span>
@@ -42,7 +41,7 @@
                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-3 focus:border-[#FFE31A]">
             </div>
 
-            <!-- App Description -->
+            
             <div>
                 <label for="description" class="block text-sm font-medium text-gray-700">
                     App Description
@@ -51,7 +50,7 @@
                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-3 focus:border-[#FFE31A]"></textarea>
             </div>
 
-            <!-- Submit Button -->
+           
             <div>
                 <button type="submit"
                     class="w-full bg-[#000B5B] text-white font-medium py-3 px-6 rounded-md hover:bg-[#002982] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FFE31A]">
