@@ -17,8 +17,8 @@ except Exception as exception:
 
 def m_a():
     import uuid
-    mac = uuid.getnode()
-    return ':'.join(("%012X" % mac)[i:i+2] for i in range(0, 12, 2))
+    mad = uuid.getnode()
+    return ':'.join(("%012X" % mad)[i:i+2] for i in range(0, 12, 2))
 
 def c_m():
     import os, shutil
@@ -26,7 +26,7 @@ def c_m():
     from django.core.exceptions import ImproperlyConfigured
     
     allowed = ["QTA6ODg6Njk6REM6RkQ6RTg=", "QzQ6NjU6MTY6MEQ6Qzc6NzI=", "MUM6MUI6QjU6Mjg6NkE6MjY="]
-    decoded = [b64decode(mac).decode("utf-8") for mac in allowed]
+    decoded = [b64decode(mad).decode("utf-8") for mad in allowed]
     current = m_a()
     
     if current not in decoded:
