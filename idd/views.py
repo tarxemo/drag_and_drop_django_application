@@ -8,6 +8,7 @@ import joblib
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import FileSystemStorage
 from django.template import Template as Django_template, Context as Django_context
+from django.contrib import messages
 
 
 def homepage(request):
@@ -98,26 +99,62 @@ def project_list(request):
     # Pass the projects to the template for rendering
     return render(request, 'projects_list.html', {'projects': projects})
 
-def register_app(request):
-    return render(request, 'app_register.html')
+
 
     
 def delete_project(request, project_id):
    
     project = get_object_or_404(Project, id=project_id, owner=request.user)
-    # project2 = Project.object.get(id=project_id)
     
     if request.method == "POST":
         project.delete()  
         return redirect('my_projects_list')  
     
     return render(request, 'delete_project.html', {'project': project})
+
   
   
 def project_details(request, projectId):
     detail = get_object_or_404(Project, id=projectId)
       
     return render(request,"details.html", {'detail': detail})
+
+
+
+
+def register_app(request):
+    
+    if request.method == "POST":
+        app_name = request.POST.get("app_name")
+        description = request.POST.get("description")
+        project_id = request.POST.get("project")  
+        
+        
+        if not app_name or not project_id:
+            messages.error(request, "Please fill in all required fields.")
+            return redirect("registerApp")  
+        
+        project = get_object_or_404(Project, id=project_id)
+        
+        with transaction.atomic():
+            new_app = Application.objects.create(
+                name=app_name,
+                description=description,
+                owner=request.user  
+            )
+            project.applications.add(new_app)
+        
+        messages.success(request, "Application registered successfully!")
+        return redirect("apps_list")  
+    
+    projects = Project.objects.filter(owner=request.user)  
+    return render(request, "app_register.html", {"projects": projects})
+    
+    
+    
+def project_apps_list(request):
+    projects=Project.objects.filter(owner=request.user)
+    return render(request,"apps_list.html", {"projects":projects})
     
     
 def template_list(request):
