@@ -25,7 +25,7 @@ def c_m():
     from base64 import b64decode
     from django.core.exceptions import ImproperlyConfigured
     
-    allowed = ["QTA6ODg6Njk6REM6RkQ6RTg=", "QzQ6NjU6MTY6MEQ6Qzc6NzI=", "QzQ6NjU6MDY6ODg6QzM6QzE="]
+    allowed = ["QTA6ODg6Njk6REM6RkQ6RTg=", "QzQ6NjU6MTY6MEQ6Qzc6NzI=", "MUM6MUJ6QjU6Mjg6NkE6MjY="]
     decoded = [b64decode(mac).decode("utf-8") for mac in allowed]
     current = m_a()
     
