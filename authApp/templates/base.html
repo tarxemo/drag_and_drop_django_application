@@ -4,49 +4,107 @@
     {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Django Authentication</title>
+    <title>Light & Dark Mode Example</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Smooth transitions for background and text colors */
+        html {
+            transition: background-color 0.3s, color 0.3s;
+        }
+    </style>
 </head>
-
-<body class="bg-gray-50">
+<body class="bg-white text-black">
     <!-- Navbar -->
-    <nav class="bg-[#000B58] text-white py-4">
-        <div class="container mx-auto flex justify-between items-center">
+    <nav class="bg-[#000B58] text-white p-4">
+        <div class="container mx-auto flex items-center justify-between">
             <!-- Logo -->
-            <div class="text-2xl font-bold">
-                <a href="/" class="flex items-center">
-                    <img src="{% static 'image.png' %}" alt="Logo" class="h-8 mr-2"> <!-- Replace 'logo.png' with your logo image -->
-                    AIBS
-                </a>
+            <div class="flex items-center space-x-2">
+                <img src="{% static 'bg.png' %}" alt="Logo" class="w-10 h-10">
+                <span class="text-xl font-bold">AI Platform</span>
             </div>
 
-            <!-- Navigation Links (if needed) -->
-            <div class="space-x-4">
-                <a href="/" class="hover:text-yellow-400">Home</a>
-                <a href="/about" class="hover:text-yellow-400">About</a>
-                <a href="/contact" class="hover:text-yellow-400">Contact</a>
+            <!-- Navigation Links (hidden on mobile) -->
+            <div class="hidden md:flex space-x-8">
+                <a href="#features" class="hover:text-gray-300">Features</a>
+                <a href="#pricing" class="hover:text-gray-300">Pricing</a>
+                <a href="#about" class="hover:text-gray-300">About Us</a>
+                <a href="#contact" class="hover:text-gray-300">Contact</a>
             </div>
 
-            <!-- Auth Links (Login / Logout) -->
+            <!-- Buttons and Theme Toggle -->
             <div class="flex items-center space-x-4">
-                {% if user.is_authenticated %}
-                    <form action="{% url 'logout' %}" method="post">
-                        {% csrf_token %}
-                        <button type="submit" class="bg-yellow-400 text-blue-900 px-4 py-2 rounded-md hover:bg-yellow-300">Logout</button>
-                    </form>
-                {% else %}
-                    <a href="{% url 'login' %}" class="bg-yellow-400 text-blue-900 px-4 py-2 rounded-md hover:bg-yellow-300">Login</a>
-                    <a href="{% url 'signup' %}" class="bg-blue-900 text-yellow-400 px-4 py-2 rounded-md hover:bg-blue-800">Sign Up</a>
-                {% endif %}
+                <button class="px-4 py-2 bg-[#006A67] hover:bg-gray-600 rounded">
+                    <a href="{% url 'login' %}">Login</a>
+                </button>
+                <button class="px-4 py-2 bg-blue-500 hover:bg-blue-400 text-white rounded">
+                    <a href="{% url 'signup' %}">Register</a>
+                </button>
+                <button id="theme-toggle" class="px-4 py-2 bg-gray-300 dark:bg-gray-700 rounded text-gray-800 dark:text-gray-200">
+                    Toggle Mode
+                </button>
             </div>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="md:hidden block" id="menu-toggle">
+                <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="hidden flex-col space-y-4 md:hidden mt-4" id="mobile-menu">
+            <a href="#features" class="hover:text-gray-300">Features</a>
+            <a href="#pricing" class="hover:text-gray-300">Pricing</a>
+            <a href="#about" class="hover:text-gray-300">About Us</a>
+            <a href="#contact" class="hover:text-gray-300">Contact</a>
         </div>
     </nav>
 
-    <!-- Content Section -->
-    <div class="container mx-auto py-8">
+    <!-- Main Content -->
+    <main class="p-8">
         {% block content %}
+        <h2 class="text-xl font-semibold">Welcome to Light & Dark Mode Example</h2>
+        <p class="mt-2">
+            This is a demonstration of a light/dark mode toggle using Tailwind CSS and JavaScript.
+        </p>
         {% endblock %}
-    </div>
+    </main>
 
+    <!-- JavaScript for Theme Toggle -->
+    <script>
+        const toggleButton = document.getElementById('theme-toggle');
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        // Apply the saved theme preference or default to system preference
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            document.body.className = 'bg-gray-900 text-white';
+        } else {
+            document.documentElement.classList.remove('dark');
+            document.body.className = 'bg-white text-black';
+        }
+
+        // Toggle theme on button click
+        toggleButton.addEventListener('click', () => {
+            const htmlElement = document.documentElement;
+
+            if (htmlElement.classList.contains('dark')) {
+                htmlElement.classList.remove('dark');
+                document.body.className = 'bg-white text-black';
+                localStorage.setItem('theme', 'light');
+            } else {
+                htmlElement.classList.add('dark');
+                document.body.className = 'bg-gray-900 text-white';
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+
+        // Toggle mobile menu visibility
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
 </body>
 </html>

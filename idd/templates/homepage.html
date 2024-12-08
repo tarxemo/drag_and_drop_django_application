@@ -1,3 +1,4 @@
+ 
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -68,7 +69,7 @@
         
             <!-- Additional Links in Main -->
             <li>
-              <a href="#Apps" title="Apps" class="tooltip flex items-center px-4 py-2 hover:bg-blue-700 transition">
+              <a href="{% url 'my_projects_list'%}" title="Apps" class="tooltip flex items-center px-4 py-2 hover:bg-blue-700 transition">
                 <i class="fa-brands fa-centos mr-3"></i>
                  <span class="tooltip__content">My Applications</span>
               </a>
@@ -123,7 +124,7 @@
               <section class="avatar__name hide">
                 <div class="user-name">{{user.username}}</div>
                </section>
-              <a  href="{% url 'logout' %}"  title="Sign Out" class="tooltip">
+              <a href="{% url 'logout' %}" title="Sign Out" class="tooltip">
                 <i class="fas fa-right-from-bracket"></i>
                 <span class="link hide"></span>
                 <span class="tooltip__content">Sign Out</span>

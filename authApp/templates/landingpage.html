@@ -1,3 +1,5 @@
+{% extends 'base.html' %}
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
     {% load static %}
@@ -24,29 +26,7 @@
   
 </head>
 <body class="bg-[#000B58]">
-  <nav class="bg-[#000B58] text-white top-0 ">
-    <div class="container mx-auto px-4 flex items-center justify-between py-4">
-      <!-- Logo -->
-      <div class="flex items-center space-x-2">
-        <img src="{% static 'bg.png'%}" alt="Logo" class="w-10 h-10">
-        <span class="text-xl font-bold">AI Platform</span>
-      </div>
-
-      <!-- Navigation Links -->
-      <div class="hidden md:flex space-x-8">
-        <a href="#features" class="hover:text-gray-300">Features</a>
-        <a href="#pricing" class="hover:text-gray-300">Pricing</a>
-        <a href="#about" class="hover:text-gray-300">About Us</a>
-        <a href="#contact" class="hover:text-gray-300">Contact</a>
-      </div>
-
-      <!-- Buttons -->
-      <div class="flex space-x-4">
-        <button class="px-4 py-2 bg-[#006A67] hover:bg-gray-600 rounded"><a href="{% url 'login'%}">Login</a></button>
-        <button class="px-4 py-2 bg-blue-500 hover:bg-blue-400 text-white rounded"><a href="{% url 'signup'%}">Register</a></button>
-      </div>
-    </div>
-  </nav>
+ 
   <!--Hero Section-->
   <section data-aos="fade-up" class="bg-[#000B58] py-16">
     <div data-aos="fade-right" class="container mx-auto px-4 flex flex-col-reverse lg:flex-row items-center">
@@ -125,3 +105,4 @@
   </script>
 </body>
 </html>
+{% endblock %}
