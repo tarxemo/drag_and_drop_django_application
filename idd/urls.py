@@ -53,4 +53,5 @@ urlpatterns = [
     path("project_Details/<int:projectId>/" , project_details, name='project_information'),
     path('project_Details/project_Update/<int:project_id>/', update_project_details, name="Update_changes"),
     path('project_Details/edit/<int:project_id>/', details_for_project, name='edit_project'),
+    path("register_app/", register_app, name="registerApp"),
 ]
