@@ -21,7 +21,7 @@
   <div class="flex flex-col h-screen lg:flex-row">
 
     <!-- Mobile Navbar -->
-    <header class="bg-blue-900 text-white lg:hidden flex justify-between items-center px-4 py-3">
+    <header class="bg-[#000B58] text-white lg:hidden flex justify-between items-center px-4 py-3">
       <div class="flex items-center">
         <img src="{% static 'logo.jpeg' %}" alt="Logo" class="h-8 w-8 mr-2">
         <span class="text-lg font-semibold">{{user.username}}</span>
@@ -32,10 +32,10 @@
     </header>
 
     <!-- Sidebar -->
-    <aside id="sidebar" class="hidden lg:block lg:w-64 bg-blue-900 text-white min-h-screen lg:relative lg:flex-shrink-0">
+    <aside id="sidebar" class="hidden lg:block lg:w-64 bg-[#000B58] text-white min-h-screen lg:relative lg:flex-shrink-0">
       <div class="flex flex-col h-full">
         <!-- Sidebar Header -->
-        <div class="flex items-center justify-between px-4 py-4 bg-blue-800">
+        <div class="flex items-center justify-between px-4 py-4 bg-[#FFE31A]">
           <img src="{% static 'logo.jpeg' %}" alt="Logo" class="h-8 w-8">
           <span class="text-lg font-semibold">Tarxemo</span>
         </div>
@@ -50,49 +50,46 @@
         <nav class="mt-6 flex-grow">
           <ul>
             <!-- Main Section -->
-            <li class="text-xs uppercase font-semibold text-gray-400 px-4 mb-2">Main</li>
-            <li>
-              <a href="#home" class="flex items-center px-4 py-2 hover:bg-blue-700 transition">
-                <i class="fas fa-home mr-3"></i> <span>Home</span>
+             <li>
+              <a href="#home" class="flex items-center text-2xl px-4 py-2 hover:bg-blue-700 transition">
+                <i class="fas fa-home mr-3  "></i> <span>Home</span>
               </a>
             </li>
             <li>
-              <a href="{% url 'templates_gallery' %}" class="flex items-center px-4 py-2 hover:bg-blue-700 transition">
-                <i class="fas fa-compass mr-3"></i> <span>Explore</span>
+              <a href="{% url 'templates_gallery' %}" class="flex items-center text-2xl px-4 py-2 hover:bg-blue-700 transition">
+                <i class="fas fa-compass mr-3 "></i> <span>Explore</span>
               </a>
             </li>
             <li>
-              <a href="{% url 'my_projects_list'%}" title="myProjects" class="tooltip">
-                <i class="fas fa-archive"></i> <!-- Font Awesome home icon -->
-                <span class="link hide">Projects</span>
-                <span class="tooltip__content">Projects</span>
+              <a href="{% url 'my_projects_list'%}" title="myProjects" class="flex text-2xl items-center px-4 py-2 hover:bg-blue-700 transition">
+                <i class="fas fa-archive mr-3 "></i> <!-- Font Awesome home icon -->
+                 <span class="tooltip__content">Projects</span>
               </a>
             </li>
         
             <!-- Additional Links in Main -->
             <li>
-              <a href="{% url 'my_projects_list'%}" title="Apps" class="tooltip flex items-center px-4 py-2 hover:bg-blue-700 transition">
+              <a href="{% url 'my_projects_list'%}" title="Apps" class="tooltip flex  text-2xl items-center px-4 py-2 hover:bg-blue-700 transition">
                 <i class="fa-brands fa-centos mr-3"></i>
-                 <span class="tooltip__content">My Applications</span>
+                 <span class="tooltip__content">Applications</span>
               </a>
             </li>
             <li>
-              <a href="{% url 'template_list'%}" title="Templates" class="tooltip flex items-center px-4 py-2 hover:bg-blue-700 transition">
-                <i class="fa-brands fa-html5 mr-3"></i>
+              <a href="{% url 'template_list'%}" title="Templates" class="tooltip text-2xl flex items-center px-4 py-2 hover:bg-blue-700 transition">
+                <i class="fa-brands fa-html5 mr-3 "></i>
                  <span class="tooltip__content">Templates</span>
               </a>
             </li>
         
             <!-- Communication Section -->
-            <li class="text-xs uppercase font-semibold text-gray-400 px-4 mt-4 mb-2">Communication</li>
-            <li>
-              <a href="#Team" class="flex items-center px-4 py-2 hover:bg-blue-700 transition">
+             <li>
+              <a href="#Team" class="flex items-center px-4 py-2 text-2xl hover:bg-blue-700 transition">
                 <i class="fas fa-users mr-3"></i> <span>Team</span>
               </a>
             </li>
             <li>
-              <a href="#notification" class="flex items-center px-4 py-2 hover:bg-blue-700 transition">
-                <i class="fas fa-bell mr-3"></i> <span>Notification</span>
+              <a href="#notification" class="flex items-center px-4 py-2 text-2xl hover:bg-blue-700 transition">
+                <i class="fas fa-bell mr-3 "></i> <span>Notification</span>
               </a>
             </li>
         
@@ -102,13 +99,13 @@
             <div class="sidebar-links bottom-links">
               <ul>
                 <li>
-                  <a href="#settings" title="Settings" class="tooltip flex items-center px-4 py-2 hover:bg-blue-700 transition">
+                  <a href="#settings" title="Settings" class=" flex text-2xl items-center px-4 py-2 hover:bg-blue-700 transition">
                     <i class="fas fa-cogs mr-3"></i>
                     <span class="link hide">Settings</span>
                    </a>
                 </li>
                 <li>
-                  <a href="#help" title="Help" class="tooltip flex items-center px-4 py-2 hover:bg-blue-700 transition">
+                  <a href="#help" title="Help" class="tooltip text-2xl flex items-center px-4 py-2 hover:bg-blue-700 transition">
                     <i class="fas fa-info-circle mr-3"></i>
                      <span class="tooltip__content">Help</span>
                   </a>
@@ -124,12 +121,12 @@
                 <div class="online__status"></div>
               </div> -->
               <section class="avatar__name hide">
-                <div class="user-name">{{user.username}}</div>
+                <div class="user-name text-xl">{{user.username}}</div>
                </section>
               <a href="{% url 'logout' %}" title="Sign Out" class="tooltip">
                 <i class="fas fa-right-from-bracket"></i>
                 <span class="link hide"></span>
-                <span class="tooltip__content">Sign Out</span>
+                <span class="tooltip__content text-2xl">Sign Out</span>
               </a>
             </div>
           </ul>
