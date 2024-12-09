@@ -1,0 +1,121 @@
+{% extends 'homepage.html'%}
+{% load static%}
+    {%block title%}Project Details {% endblock %}
+
+{% block content%}    
+
+<div class="bg-[#F9FAFB] text-[#000B5B] font-sans">
+    <div class="min-h-screen flex flex-col items-center">
+        <!-- Header -->
+        <header class="bg-[#000B5B] w-full py-4 text-white">
+            <h1 class="text-center text-3xl font-bold">Project Details</h1>
+        </header>
+
+       
+        <div class="w-full max-w-5xl mx-auto mt-10 bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-2xl font-semibold text-[#000B5B] mb-4">Project Information</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Project Name -->
+                <div>
+                    <h3 class="font-bold text-lg">Project Name:</h3>
+                    <p class="mt-1 text-gray-700">{{detail.title}}</p>
+                </div>
+
+                <!-- Category -->
+                <div>
+                    <h3 class="font-bold text-lg">Category:</h3>
+                    <p class="mt-1 text-gray-700">{{detail.category}}</p>
+                </div>
+
+                <!-- Description -->
+                <div class="md:col-span-2">
+                    <h3 class="font-bold text-lg">Description:</h3>
+                    <p class="mt-1 text-gray-700">
+                        {{detail.description}}
+                    </p>
+                </div>
+
+                <!-- Start Date -->
+                <div>
+                    <h3 class="font-bold text-lg">Start Date:</h3>
+                    <p class="mt-1 text-gray-700">{{detail.start_date}}</p>
+                </div>
+
+                <!-- Completion Date -->
+                <div>
+                    <h3 class="font-bold text-lg">Completion Date:</h3>
+                    <p class="mt-1 text-gray-700">{{detail.expected_completion_date}}</p>
+                </div>
+
+                <!-- Status -->
+                <div>
+                    <h3 class="font-bold text-lg">Status:</h3>
+                    <p class="mt-1 text-gray-700">{{detail.status}}</p>
+                </div>
+
+                <!-- Priority -->
+                <div>
+                    <h3 class="font-bold text-lg">Priority:</h3>
+                    <p class="mt-1 text-gray-700">{{detail.priority}}</p>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+             
+                 <div class="mt-8  space-x-3 ">
+                
+                    <button  class="bg-[#FFE31A] text-[#000B5B] px-6 py-2 rounded hover:bg-yellow-400">
+                       <a href="{% url 'edit_project' detail.id %}">Edit Project</a> 
+                    </button>
+                    <button  class="bg-[#000B5B] text-[#FFE31A]  px-6 py-2 rounded hover:bg-blue-600">
+                        <a href="{% url 'my_projects_list' %}">Back to Projects</a>
+                    </button>
+                    <div class=" flex justify-end ">
+                        <button  onclick="openChoice()" class="rounded-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-green-500 hover:to-blue-500 px-6 py-2 ">
+                            Start project
+                         </button>
+                    </div>     
+                </div>
+            
+        </div>
+    </div>
+
+    <div id="choice" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen">
+            <div class="bg-white rounded-lg p-6 w-11/12 max-w-2xl">
+                <h2 class="text-2xl font-semibold text-[#000B5B] mb-4">Choose How to Start Your First App</h2>
+    
+                <form method="POST" id="deleteForm" class="inline-block" action="">
+                    {% csrf_token %} 
+                    <p class="text-lg text-gray-700 mb-4">How would you like to start with Your First project App? "<span class="font-semibold">{{ detail.title }}</span>"?</p>
+                    <div class="flex space-x-4">
+                        <button type="button"  class="px-4 py-2 bg-[#000B5B] text-white font-semibold rounded-lg hover:bg-[#FFE31A] focus:outline-none focus:ring-2 focus:ring-red-400">
+                             <a href="">
+                                Import App
+                            </a>
+                        </button>
+                       <button class="px-4 py-2 bg-[#FFE31A] text-gray-800 rounded-lg hover:bg-[#000B5B] font-semibold focus:outline-none focus:ring-2 focus:ring-gray-400">
+                        <a href="{% url 'registerApp'%}" >
+                            Create App
+                        </a>
+                    </button> 
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function openChoice() {
+        const projectModal = document.getElementById('choice');
+        projectModal.classList.remove('hidden');
+    }
+
+    function closeChoice() {
+        const projectModal = document.getElementById('choice');
+        projectModal.classList.add('hidden');
+    }
+
+</script>
+{% endblock%}

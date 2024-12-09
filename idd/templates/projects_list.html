@@ -29,12 +29,14 @@
                     <td class="w-auto text-center py-3 px-4">{{ project.title }}</td>
                     <td class="w-auto text-center py-3 px-4">{{ project.status }}</td>
                     <td class="w-full py-3 px-4 flex justify-between">
-                        <button onclick="openEdit('{{ project.id }}')"  class="text-blue-500 hover:text-blue-700">
-                            <i class="fas fa-edit"></i> Edit
+                        <button  class="text-blue-500 hover:text-blue-700">
+                            <a href="{% url 'project_information' project.id %}"><i class="fa-solid fa-street-view"></i> View</a>
                         </button>
                         <button onclick="openDelete('{{ project.id }}')" class="text-red-500 hover:text-red-700 ml-4">
                             <i class="fas fa-trash-alt"></i> Delete
-                        </a>
+                        <button class="text-green-500 hover:text-green-700 ml-4">
+                                <i class="fa-solid fa-download"></i> Download
+                        </button>
                     </td>
                 </tr>
                 {% endif%}
@@ -122,85 +124,6 @@
                 </button>
             </div>
         </form>
-    </div>
-</div>
-
-<!-- Edit Project -->
-<div id="edit" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
-    <div class="flex items-center justify-center min-h-screen">
-        <div class="bg-white rounded-lg p-6 w-11/12 max-w-2xl">
-            <h2 class="text-2xl font-semibold text-[#000B5B] mb-4">Update Project</h2>
-            
-            <!-- Form -->
-
-            <form method="POST" action="#">
-                {% csrf_token %}
-                <div class="space-y-4">
-                    <div>
-                        <label for="title" class="block text-[#000B5B] font-medium">Project Title</label>
-                        <input type="text" name="title" value="{{ project.title }}" required
-                               class="w-full p-2 border border-[#FFE3A1] rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFE3A1]">
-                    </div>
-                    
-                    <div>
-                        <label for="description" class="block text-[#000B5B] font-medium">Project Description</label>
-                        <textarea name="description" required
-                                  class="w-full p-2 border border-[#FFE3A1] rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFE3A1]">{{ project.description }}</textarea>
-                    </div>
-                    
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label for="start_date" class="block text-[#000B5B] font-medium">Start Date</label>
-                            <input type="date" name="start_date" value="{{ project.start_date }}"
-                                   class="w-full p-2 border border-[#FFE3A1] rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFE3A1]">
-                        </div>
-                        
-                        <div>
-                            <label for="expected_completion_date" class="block text-[#000B5B] font-medium">Expected Completion</label>
-                            <input type="date" name="expected_completion_date" value="{{ project.expected_completion_date }}"
-                                   class="w-full p-2 border border-[#FFE3A1] rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFE3A1]">
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label for="status" class="block text-[#000B5B] font-medium">Status</label>
-                        <select name="status"
-                                class="w-full p-2 border border-[#FFE3A1] rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFE3A1]">
-                            <option value="planned" {% if project.status == 'planned' %}selected{% endif %}>Planned</option>
-                            <option value="in_progress" {% if project.status == 'in_progress' %}selected{% endif %}>In Progress</option>
-                            <option value="completed" {% if project.status == 'completed' %}selected{% endif %}>Completed</option>
-                        </select>
-                    </div>
-                    
-                    <div>
-                        <label for="priority" class="block text-[#000B5B] font-medium">Priority</label>
-                        <select name="priority"
-                                class="w-full p-2 border border-[#FFE3A1] rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFE3A1]">
-                            <option value="high" {% if project.priority == 'high' %}selected{% endif %}>High</option>
-                            <option value="medium" {% if project.priority == 'medium' %}selected{% endif %}>Medium</option>
-                            <option value="low" {% if project.priority == 'low' %}selected{% endif %}>Low</option>
-                        </select>
-                    </div>
-                    
-                    <div>
-                        <label for="category" class="block text-[#000B5B] font-medium">Category</label>
-                        <input type="text" name="category" value="{{ project.category }}"
-                               class="w-full p-2 border border-[#FFE3A1] rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFE3A1]">
-                    </div>
-                </div>
-                
-                <div class="mt-6 flex justify-end space-x-4">
-                    <button type="button" onclick="closeEdit()"
-                            class="bg-gray-300 text-[#000B5B] px-4 py-2 rounded-md hover:bg-gray-400 focus:outline-none">
-                        Cancel
-                    </button>
-                    <button type="submit"
-                            class="bg-[#000B5B] text-white px-4 py-2 rounded-md hover:bg-[#FFE3A1] focus:outline-none">
-                        Update Project
-                    </button>
-                </div>
-            </form>
-        </div>
     </div>
 </div>
 

@@ -1,0 +1,86 @@
+{% extends 'homepage.html'%}
+
+{% load static%}
+       {% block title%} {% endblock%}
+
+{% block content%} 
+<div class="bg-[#F9FAFB] text-[#000B5B] font-sans">
+    <div class="min-h-screen flex flex-col items-center">
+        <header class="bg-[#000B5B] w-full py-4 text-white">
+            <h1 class="text-center text-3xl font-bold">Project Details Update</h1>
+        </header>
+        <div class="w-full max-w-5xl mx-auto mt-10 bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-2xl font-semibold text-[#000B5B] mb-4">Project Update</h2>
+            
+
+            <form method="POST" action="{% url 'Update_changes' project.id %}">
+                {% csrf_token %}
+                <div class="space-y-4">
+                    <div>
+                        <label for="title" class="block text-[#000B5B] font-medium">Project Title</label>
+                        <input type="text" name="title" value="{{ project.title }}" required
+                               class="w-full p-2 border border-[#FFE3A1] rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFE3A1]">
+                    </div>
+                    
+                    <div>
+                        <label for="description" class="block text-[#000B5B] font-medium">Project Description</label>
+                        <textarea name="description" required
+                                  class="w-full p-2 border border-[#FFE3A1] rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFE3A1]">{{ project.description }}</textarea>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="start_date" class="block text-[#000B5B] font-medium">Start Date</label>
+                            <input type="date" name="start_date" value="{{ project.start_date|date:'Y-m-d' }}"
+                                   class="w-full p-2 border border-[#FFE3A1] rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFE3A1]">
+                        </div>
+                        
+                        <div>
+                            <label for="expected_completion_date" class="block text-[#000B5B] font-medium">Expected Completion</label>
+                            <input type="date" name="expected_completion_date" value="{{ project.expected_completion_date|date:'Y-m-d' }}"
+                                   class="w-full p-2 border border-[#FFE3A1] rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFE3A1]">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="status" class="block text-[#000B5B] font-medium">Status</label>
+                        <select name="status"
+                                class="w-full p-2 border border-[#FFE3A1] rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFE3A1]">
+                            <option value="planned" {% if project.status == 'planned' %}selected{% endif %}>Planned</option>
+                            <option value="in_progress" {% if project.status == 'in_progress' %}selected{% endif %}>In Progress</option>
+                            <option value="completed" {% if project.status == 'completed' %}selected{% endif %}>Completed</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="priority" class="block text-[#000B5B] font-medium">Priority</label>
+                        <select name="priority"
+                                class="w-full p-2 border border-[#FFE3A1] rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFE3A1]">
+                            <option value="high" {% if project.priority == 'high' %}selected{% endif %}>High</option>
+                            <option value="medium" {% if project.priority == 'medium' %}selected{% endif %}>Medium</option>
+                            <option value="low" {% if project.priority == 'low' %}selected{% endif %}>Low</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="category" class="block text-[#000B5B] font-medium">Category</label>
+                        <input type="text" name="category" value="{{ project.category }}"
+                               class="w-full p-2 border border-[#FFE3A1] rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFE3A1]">
+                    </div>
+                </div>
+                
+                <div class="mt-6 flex justify-end space-x-4">
+                    <button type="button" 
+                            class="bg-gray-300 text-[#000B5B] px-4 py-2 rounded-md hover:bg-gray-400 focus:outline-none">
+                        <a href="{% url 'project_information'  project.id %}"> Back to Details</a>
+                    </button>
+                    <button type="submit"
+                            class="bg-[#000B5B] text-white px-4 py-2 rounded-md hover:bg-[#FFE3A1] focus:outline-none">
+                        Update Project
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock%}      

@@ -1,0 +1,64 @@
+{% extends 'homepage.html' %}
+{% load static %}
+
+{% block title %}App Register{% endblock %}
+
+{% block content %}
+<div class="bg-gray-100 min-h-screen flex items-center justify-center">
+
+    <!-- Updated Container -->
+    <div class="max-w-3xl w-full bg-white rounded-lg shadow-lg p-10">
+        
+        <!-- Header -->
+        <h1 class="text-3xl font-bold text-[#000B5B] mb-6">Register New App</h1>
+        <p class="text-sm text-gray-600 mb-8">
+            Use the form below to register a new app for a project. Fields marked with 
+            <span class="text-[#FFE31A] font-semibold">*</span> are required.
+        </p>
+
+        
+        <form action="" method="POST" class="space-y-6">
+            {% csrf_token %}
+
+            <div>
+                <label for="project" class="block text-sm font-medium text-gray-700 p-3">
+                    Select Project <span class="text-[#FFE31A]">*</span>
+                </label>
+                <select id="project" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-3 focus:border-[#FFE31A]" name="project" required>
+                    <option value="" disabled selected>Select a project</option>
+                    {% for project in projects %}
+                        <option value="{{ project.id }}">{{ project.title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            
+            <div>
+                <label for="app_name" class="block text-sm font-medium text-gray-700">
+                    App Name <span class="text-[#FFE31A]">*</span>
+                </label>
+                <input type="text" id="app_name" name="app_name" placeholder="Enter app name" required
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-3 focus:border-[#FFE31A]">
+            </div>
+
+            
+            <div>
+                <label for="description" class="block text-sm font-medium text-gray-700">
+                    App Description
+                </label>
+                <textarea id="description" name="description" rows="5" placeholder="Write a short description..." 
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-3 focus:border-[#FFE31A]"></textarea>
+            </div>
+
+           
+            <div>
+                <button type="submit"
+                    class="w-full bg-[#000B5B] text-white font-medium py-3 px-6 rounded-md hover:bg-[#002982] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FFE31A]">
+                    Register App
+                </button>
+            </div>
+        </form>
+    </div>
+
+</div>
+{% endblock %}
