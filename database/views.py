@@ -55,6 +55,7 @@ class DynamicModelAPIView(APIView):
             data = json.loads(request.body.decode('utf-8'))
             print(data)
             model_name = data.get('model_name')
+            app_id = data.get('app_id')
             fields = data.get('fields')
 
             if not model_name or not fields:
@@ -66,6 +67,7 @@ class DynamicModelAPIView(APIView):
             DynamicModelLog.objects.create(
                 user=request.user if request.user.is_authenticated else None,
                 model_name=model_name,
+                application=Application.objects.get(id=app_id)
             )
             
             return Response({"status": "success", "message": f"Model {model_name} created and migrations applied!"}, status=status.HTTP_201_CREATED)
@@ -144,18 +146,19 @@ def view_model(request):
 def create_model(request):
     if request.method == 'POST':
         model_name = request.POST['model_name']
+        app_id = request.POST['app_id']
         fields = {}  # You would parse fields from the form, potentially using JavaScript to add more fields
         
         # Prepare and send the POST request
-        response = requests.post(API_BASE_URL, json={'model_name': model_name, 'fields': fields})
+        response = requests.post(API_BASE_URL, json={'model_name': model_name, 'fields': fields, 'app_id':app_id})
         
         if response.status_code == 201:
             messages.success(request, f'Model {model_name} created successfully!')
             return redirect('list_models')
         else:
             messages.error(request, 'Error creating model.')
-    
-    return render(request, 'database/templates/create_model.html')
+    applications = Application.objects.filter(owner=request.user)
+    return render(request, 'database/templates/create_model.html', {'applications':applications})
 
 # Edit a model
 def edit_model(request):
