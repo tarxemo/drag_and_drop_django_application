@@ -41,10 +41,49 @@ class Application(models.Model):
 
 class Template(models.Model):
     CATEGORY_CHOICES = [
-        ('CATEGORY_1', 'Category 1'),
-        ('CATEGORY_2', 'Category 2'),
-        ('CATEGORY_3', 'Category 3'),
-    ]
+    ('LOGIN_PAGE', 'Login Page'),
+    ('REGISTRATION_PAGE', 'Registration Page'),
+    ('FORGOT_PASSWORD_PAGE', 'Forgot Password Page'),
+    ('TWO_FACTOR_AUTHENTICATION_PAGE', 'Two-Factor Authentication Page'),
+    ('LANDING_PAGE', 'Landing Page'),
+    ('HOME_PAGE', 'Home Page'),
+    ('SPLASH_PAGE', 'Splash Page'),
+    ('NAVIGATION_BAR', 'Navigation Bar'),
+    ('SIDEBAR_MENU', 'Sidebar Menu'),
+    ('DROPDOWN_MENU', 'Dropdown Menu'),
+    ('ABOUT_PAGE', 'About Page'),
+    ('BLOG_PAGE', 'Blog Page'),
+    ('PORTFOLIO_PAGE', 'Portfolio Page'),
+    ('GALLERY_PAGE', 'Gallery Page'),
+    ('FAQ_PAGE', 'FAQ Page'),
+    ('USER_DASHBOARD', 'User Dashboard'),
+    ('ADMIN_DASHBOARD', 'Admin Dashboard'),
+    ('ANALYTICS_DASHBOARD', 'Analytics Dashboard'),
+    ('PROFILE_PAGE', 'Profile Page'),
+    ('USER_SETTINGS_PAGE', 'User Settings Page'),
+    ('CONTACT_FORM_PAGE', 'Contact Form Page'),
+    ('FEEDBACK_FORM_PAGE', 'Feedback or Review Form Page'),
+    ('SUBSCRIPTION_FORM_PAGE', 'Subscription Form Page'),
+    ('PRODUCT_LISTING_PAGE', 'Product Listing Page'),
+    ('PRODUCT_DETAILS_PAGE', 'Product Details Page'),
+    ('SHOPPING_CART_PAGE', 'Shopping Cart Page'),
+    ('CHECKOUT_PAGE', 'Checkout Page'),
+    ('PAGE_404', '404 Page'),
+    ('PAGE_500', '500 Page'),
+    ('MAINTENANCE_PAGE', 'Maintenance Page'),
+    ('TERMS_CONDITIONS_PAGE', 'Terms and Conditions Page'),
+    ('PRIVACY_POLICY_PAGE', 'Privacy Policy Page'),
+    ('COMING_SOON_PAGE', 'Coming Soon Page'),
+    ('UNDER_CONSTRUCTION_PAGE', 'Under Construction Page'),
+    ('SEARCH_RESULTS_PAGE', 'Search Results Page'),
+    ('FILE_UPLOAD_PAGE', 'File Upload Page'),
+    ('DOWNLOAD_PAGE', 'Download Page'),
+    ('EVENT_PAGE', 'Event Page'),
+    ('FORUM_PAGE', 'Forum or Discussion Page'),
+    ('CHAT_PAGE', 'Message or Chat Page'),
+    ('TESTIMONIAL_PAGE', 'Testimonial Page'),
+]
+
     application = models.ForeignKey(Application, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, unique=True)
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, null=True, blank=True)

@@ -158,16 +158,27 @@ def project_apps_list(request):
     
     
 def template_list(request):
-    templates = Template.objects.all()
-    return render(request, 'template_list.html', {'templates': templates})
+    parent_id = request.GET.get('parent_id')
+    if parent_id != None:
+        templates = Template.objects.filter(application__id = parent_id) 
+    else:
+        templates = Template.objects.all()   
+        
+    category_names = [display for value, display in Template.CATEGORY_CHOICES]
+    applications = Application.objects.filter(owner=request.user)
+    return render(request, 'template_list.html', {'templates': templates , 'categories': category_names, 'applications':applications })
 
 def add_template(request):
     if request.method == 'POST':
         name = request.POST.get('name')
-        if name:
-            template = Template.objects.create(name=name)
+        category = request.POST.get('category')
+        app_id = request.POST.get('app_id')
+        application = Application.objects.get(id=app_id)
+        if name and category:
+            template = Template.objects.create(name=name , category=category, application=application, owner=request.user)
             Tag.objects.create(template=template, tag_name="div", text_content="Starting a new template")
             return redirect('template_list')
+    applications = Application.objects.filter(owner=request.user)
     return render(request, 'add_template.html')
 
 
@@ -378,12 +389,15 @@ def delete_attribute(request, template_id):
 def upload_html(request):
     if request.method == 'POST':
         template_name = request.POST.get("template_name")
+        category =request.POST.get("category")
+        app_id=request.POST.get("app_id")
+        application = Application.objects.get(id=app_id)
         html_file = request.FILES.get('file')
         fs = FileSystemStorage()
         filename = fs.save(html_file.name, html_file)
         file_path = fs.path(filename)
-        parse_and_save_html(file_path, template_name)
-        return redirect('template_list')  # Redirect to a list of templates or any other view
+        parse_and_save_html(file_path, template_name, category, app_id)
+        return redirect('template_list') 
     else:
         return render(request, 'upload_html.html')
 

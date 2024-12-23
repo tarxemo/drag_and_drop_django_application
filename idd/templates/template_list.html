@@ -4,41 +4,157 @@
    {% block content%}
     <div class="container mx-auto mt-5">
         <div class="flex justify-between items-center mb-4">
+           
             <h1 class="text-3xl font-bold">Templates</h1>
-            <a href="{% url 'add_template' %}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            <button  onclick="openAddTemplate('{{templates.application.id}}')" class="bg-[#000B5B] text-white px-4 py-2 rounded hover:text-[#FFE31A]">
                 <i class="fas fa-plus"></i> Add New Template
-            </a>
-            <a href="{% url 'upload_html' %}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            </button>
+            <button  onclick="OpenUploadTemplate('{{templates.application.id}}')" class="bg-[#000B5B] text-white px-4 py-2 rounded hover:text-[#FFE31A]">
                 <i class="fas fa-plus"></i> Upload Template
-            </a>
+            </button>
         </div>
         <div class="bg-white shadow-md rounded my-6">
             <table class="min-w-full bg-white">
-                <thead class="bg-gray-800 text-white">
+                <thead class="bg-[#19182D] text-white">
                     <tr>
                         <th class="w-1/3 py-3 px-4 uppercase font-semibold text-sm">Template Name</th>
                         <th class="w-1/3 py-3 px-4 uppercase font-semibold text-sm">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="text-gray-700">
-                    {% for template in templates %}
+                    {% if templates %}
+                      {% for template in templates %}                    
                         <tr>
                             <td class="w-auto text-center py-3 px-4">{{ template.name }}</td>
                             <td class="w-full py-3 px-4 flex justify-between">
-                                <a href="{% url 'template_detail' template.id %}" class="text-blue-500 hover:text-blue-700">
+                                <a href="{% url 'template_detail' template.id %}" class="text-[#000B5B] hover:text-[#FFE31A]">
                                     <i class="fas fa-edit"></i> Edit
                                 </a>
                                 <a href="{% url 'delete_template' template.id %}" class="text-red-500 hover:text-red-700 ml-4">
                                     <i class="fas fa-trash-alt"></i> Delete
                                 </a>
-                                <a href="{% url 'download_html' template.id %}" class="text-green-500 hover:text-green-700 ml-4">
+                                <a href="{% url 'download_html' template.id %}" class="text-[#FFE31A] hover:text-green-700 ml-4">
                                     <i class="fas fa-download"></i> Download
                                 </a>
                             </td>
                         </tr>
                     {% endfor %}
+                    {% else %}
+                    <td class="w-auto text-center py-3 px-4 justify-center"> No Templates registered In this Applications yet</td>
+                    {%endif%}
                 </tbody>
             </table>
         </div>
     </div>
+<!-- add project template -->
+    <div id="addTemplate" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen">
+            <div class="bg-white rounded-lg p-6 w-11/12 max-w-2xl">
+                <h2 class="text-2xl font-semibold text-[#000B5B] mb-4">Add Template</h2>
+                
+                    {% csrf_token %}
+                    <div class="space-y-4">
+                        <form action="{% url 'add_template' %}" method="post">
+                            {% csrf_token %}
+                            <div class="mb-4">
+                                <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Template Name:</label>
+                                <input type="text" id="name" name="name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-3" required><br>
+                                <label for="template-category" class="block text-gray-700 text-sm font-bold mb-2">Choose a category:</label>
+                                <select id="template-category" name="category" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-3" name="category" required>
+                                    <option value="" disabled selected>Select a category</option>
+                                    {% for category in categories %}
+                                        <option value="{{ category}}">{{ category }}</option>
+                                    {% endfor %}
+                                </select>
+                                <select name="app_id" id="">
+                                    {% for application in applications %}
+                                    <option value="{{application.id}}">{{application.name}}</option>
+                                    {% endfor %}
+                                </select>
+                                <br><br>
+                            </div>
+                    
+                            <div class="mt-6 flex justify-end space-x-4">
+                                <button type="button" onclick="closeAddTemplate()"
+                                        class="bg-gray-300 text-[#000B5B] px-4 py-2 rounded-md hover:bg-gray-400 focus:outline-none">
+                                    Cancel
+                                </button>
+                                <button type="submit"
+                                        class="bg-[#000B5B] text-white px-4 py-2 rounded-md hover:bg-[#FFE3A1] focus:outline-none">
+                                    Add Template
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload project template -->
+    <div id="uploadTemplate" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen">
+            <div class="bg-white rounded-lg p-6 w-11/12 max-w-2xl">
+                <h2 class="text-2xl font-semibold text-[#000B5B] mb-4">Upload Template</h2>
+                
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    <div class="space-y-4">
+                        <form action="" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="mb-4">
+                                <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Template Name:</label>
+                                <input type="text" id="name" name="template_name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                            </div>
+                            <div class="mb-4">
+                            <label for="template-category" class="block text-gray-700 text-sm font-bold mb-2">Choose a category:</label>
+                                <select id="template-category" name='category' class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-3" name="category" required>
+                                    <option value="" disabled selected>Select a category</option>
+                                    {% for category in categories %}
+                                        <option value="{{ category }}">{{ category}}</option>
+                                    {% endfor %}
+                                </select>
+                                <select name="app_id" id="app_id">
+                                    {% for application in applications %}
+                                    <option value="{{application.id}}">{{application.name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label for="file" class="block text-gray-700 text-sm font-bold mb-2">File:</label>
+                                <input type="file" id="file" name="file" accept=".html" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                            </div>
+                    </div>
+                    
+                    <div class="mt-6 flex justify-end space-x-4">
+                        <button type="button" onclick="closeUploadTemplate()"
+                                class="bg-gray-300 text-[#000B5B] px-4 py-2 rounded-md hover:bg-gray-400 focus:outline-none">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                                class="bg-[#000B5B] text-white px-4 py-2 rounded-md hover:bg-[#FFE3A1] focus:outline-none">
+                            Upload Template
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    
+    <script>
+        function openAddTemplate() {
+            document.getElementById('addTemplate').classList.remove('hidden');
+        }
+    
+        function closeAddTemplate() {
+            document.getElementById('addTemplate').classList.add('hidden');
+        }
+        function OpenUploadTemplate() {
+            document.getElementById("uploadTemplate").classList.remove("hidden");
+        }
+    
+        function closeUploadTemplate() {
+            document.getElementById("uploadTemplate").classList.add("hidden");
+        }
+    </script>
 {%endblock%}

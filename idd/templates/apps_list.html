@@ -14,7 +14,7 @@
     
     <div class="bg-white shadow-md rounded my-6">
         <table class="min-w-full bg-white">
-            <thead class="bg-gray-800 text-white">
+            <thead class="bg-[#19182D] text-white">
                 <tr>
                     <th class="w-1/3 py-3 px-4 uppercase font-semibold text-sm">Project Title</th>
                     <th class="w-1/3 py-3 px-4 uppercase font-semibold text-sm">App Name</th>
@@ -30,7 +30,7 @@
                                 <td class="w-auto text-center py-3 px-4">{{ application.name }}</td>
                                 <td class="w-full py-3 px-4 flex justify-between">
                                     <button class="text-blue-500 hover:text-blue-700">
-                                        <a href="">
+                                        <a href="{% url 'template_list'%}?parent_id={{ application.id }}">
                                             <i class="fa-solid fa-street-view"></i> View
                                         </a>
                                     </button>
