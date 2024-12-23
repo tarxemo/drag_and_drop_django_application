@@ -84,54 +84,57 @@ class {model.model_name}(models.Model):
 
 
 # Main function to create Django project
-def create_django_project(request, project_name="my_project", app_name="new_app"):
+def create_django_project(request, project_id):
+    project = Project.objects.get(id=project_id)
     user = request.user  # Get the current user
 
     # Use a temporary directory for the project folder
     with tempfile.TemporaryDirectory() as project_dir:
         # Create Django project using subprocess
         subprocess.run(
-            ["django-admin", "startproject", project_name, project_dir],
+            ["django-admin", "startproject", project.title, project_dir],
             check=True,
         )
 
         # Path to the newly created project directory
-        created_project_dir = os.path.join(project_dir, project_name)
+        created_project_dir = os.path.join(project_dir, project.title)
 
         # Navigate to the project directory and create the app
-        subprocess.run(
-            ["python3", "manage.py", "startapp", app_name],
-            cwd=project_dir,
-            check=True,
-        )
+        project_apps = project.applications.all()
+        for project_app in project_apps:
+            subprocess.run(
+                ["python3", "manage.py", "startapp", project_app.name],
+                cwd=project_dir,
+                check=True,
+            )
 
-        # Path to the app directory
-        app_dir = os.path.join(project_dir, app_name)
+            # Path to the app directory
+            app_dir = os.path.join(project_dir, project_app.name)
 
-        # Ensure the app is added to INSTALLED_APPS in settings.py
-        settings_path = os.path.join(created_project_dir, "settings.py")
-        with open(settings_path, "a") as settings_file:
-            settings_file.write(f"\nINSTALLED_APPS.append('{app_name}')\n")
+            # Ensure the app is added to INSTALLED_APPS in settings.py
+            settings_path = os.path.join(created_project_dir, "settings.py")
+            with open(settings_path, "a") as settings_file:
+                settings_file.write(f"\nINSTALLED_APPS.append('{project_app.name}')\n")
 
-        # Create templates directory for the app
-        templates_dir = os.path.join(app_dir, "templates", app_name)
-        os.makedirs(templates_dir, exist_ok=True)
+            # Create templates directory for the app
+            templates_dir = os.path.join(app_dir, "templates", project_app.name)
+            os.makedirs(templates_dir, exist_ok=True)
 
-        # Generate templates for the app
-        templates = Template.objects.all()
-        for template in templates:
-            template_html = generate_template_by_id(template.id)
-            template_path = os.path.join(templates_dir, f"{template.name}.html")
-            with open(template_path, "w") as file:
-                file.write(template_html)
+            # Generate templates for the app
+            templates = Template.objects.filter(application=project_app)
+            for template in templates:
+                template_html = generate_template_by_id(template.id)
+                template_path = os.path.join(templates_dir, f"{template.name}.html")
+                with open(template_path, "w") as file:
+                    file.write(template_html)
 
-        # Retrieve all models from DynamicModelLog
-        models = DynamicModelLog.objects.filter(user=user)
+            # Retrieve all models from DynamicModelLog
+            models = DynamicModelLog.objects.filter(user=user, application=project_app)
 
-        # Add content to views.py, urls.py, and models.py
-        add_views_content(app_dir, models, user)
-        add_urls_content(app_dir, models)
-        # add_models_content(app_dir, models)
+            # Add content to views.py, urls.py, and models.py
+            add_views_content(app_dir, models, user)
+            add_urls_content(app_dir, models)
+            add_models_content(app_dir, models)
 
         # Zip the project folder
         zip_buffer = BytesIO()
@@ -146,7 +149,7 @@ def create_django_project(request, project_name="my_project", app_name="new_app"
 
         # Serve the ZIP file as a download
         response = HttpResponse(zip_buffer, content_type="application/zip")
-        response["Content-Disposition"] = f'attachment; filename="{project_name}.zip"'
+        response["Content-Disposition"] = f'attachment; filename="{project.title}.zip"'
 
         # The temporary directory and its contents are automatically cleaned up here
         return response

@@ -67,8 +67,8 @@ def create_model_file(model_name, fields):
     model_definition = f"""
 class {model_name}(models.Model):
 {field_definitions}
-def __str__(self):
-    return self.title
+    def __str__(self):
+        return self.id
     """
 
     # Append the model definition to the models.py file

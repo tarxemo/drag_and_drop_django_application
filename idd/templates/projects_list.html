@@ -6,12 +6,11 @@
 <div class="container mx-auto mt-5">
     <div class="flex justify-between items-center mb-4">
         <h1 class="text-3xl font-bold">My Projects</h1>
-        <button onclick="openModal()" 
-                class="bg-[#000B5B] text-white px-4 py-2 rounded hover:bg-[#003399]">
+        <button onclick="openModal()" class="bg-[#000B5B] text-white px-4 py-2 rounded hover:bg-[#003399]">
             <i class="fas fa-plus"></i> Add New Project
         </button>
     </div>
-    
+
     <!-- Projects Table -->
     <div class="bg-white shadow-md rounded my-6">
         <table class="min-w-full bg-white">
@@ -24,19 +23,22 @@
             </thead>
             <tbody class="text-gray-700">
                 {% for project in projects %}
-                {%if  project.title %}
+                {%if project.title %}
                 <tr>
                     <td class="w-auto text-center py-3 px-4">{{ project.title }}</td>
                     <td class="w-auto text-center py-3 px-4">{{ project.status }}</td>
                     <td class="w-full py-3 px-4 flex justify-between">
-                        <button  class="text-blue-500 hover:text-blue-700">
-                            <a href="{% url 'project_information' project.id %}"><i class="fa-solid fa-street-view"></i> View</a>
+                        <button class="text-blue-500 hover:text-blue-700">
+                            <a href="{% url 'project_information' project.id %}"><i class="fa-solid fa-street-view"></i>
+                                View</a>
                         </button>
                         <button onclick="openDelete('{{ project.id }}')" class="text-red-500 hover:text-red-700 ml-4">
                             <i class="fas fa-trash-alt"></i> Delete
-                        <button class="text-green-500 hover:text-green-700 ml-4">
-                                <i class="fa-solid fa-download"></i> Download
-                        </button>
+                            <button class="text-green-500 hover:text-green-700 ml-4">
+                                <a href="{% url 'create_django_project' project.id %}">
+                                    <i class="fa-solid fa-download"></i> Download
+                                </a>
+                            </button>
                     </td>
                 </tr>
                 {% endif%}
@@ -55,71 +57,71 @@
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        
+
         <!-- Registration Form -->
         <form method="POST" action="{% url 'register_project' %}">
             {% csrf_token %}
-            
+
             <div class="mb-4">
                 <label for="title" class="block text-sm font-medium text-gray-700">Project Title</label>
-                <input type="text" id="title" name="title" 
-                       class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-[#000B5B] focus:border-[#FFE31A]" 
-                       required>
+                <input type="text" id="title" name="title"
+                    class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-[#000B5B] focus:border-[#FFE31A]"
+                    required>
             </div>
-            
+
             <div class="mb-4">
                 <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-                <textarea id="description" name="description" rows="3" 
-                          class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-[#000B5B] focus:border-[#FFE31A]" 
-                          required></textarea>
+                <textarea id="description" name="description" rows="3"
+                    class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-[#000B5B] focus:border-[#FFE31A]"
+                    required></textarea>
             </div>
-            
+
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label for="start_date" class="block text-sm font-medium text-gray-700">Start Date</label>
-                    <input type="date" id="start_date" name="start_date" 
-                           class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-[#000B5B] focus:border-[#FFE31A]">
+                    <input type="date" id="start_date" name="start_date"
+                        class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-[#000B5B] focus:border-[#FFE31A]">
                 </div>
                 <div>
-                    <label for="completion_date" class="block text-sm font-medium text-gray-700">Expected Completion</label>
-                    <input type="date" id="completion_date" name="expected_completion_date" 
-                           class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-[#000B5B] focus:border-[#FFE31A]">
+                    <label for="completion_date" class="block text-sm font-medium text-gray-700">Expected
+                        Completion</label>
+                    <input type="date" id="completion_date" name="expected_completion_date"
+                        class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-[#000B5B] focus:border-[#FFE31A]">
                 </div>
             </div>
-            
+
             <div class="mb-4">
                 <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-                <select id="status" name="status" 
-                        class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-[#000B5B] focus:border-[#FFE31A]">
+                <select id="status" name="status"
+                    class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-[#000B5B] focus:border-[#FFE31A]">
                     <option value="planned">Planned</option>
                     <option value="in_progress">In Progress</option>
                     <option value="completed">Completed</option>
                 </select>
             </div>
-            
+
             <div class="mb-4">
                 <label for="priority" class="block text-sm font-medium text-gray-700">Priority</label>
-                <select id="priority" name="priority" 
-                        class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-[#000B5B] focus:border-[#FFE31A]">
+                <select id="priority" name="priority"
+                    class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-[#000B5B] focus:border-[#FFE31A]">
                     <option value="high">High</option>
                     <option value="medium">Medium</option>
                     <option value="low">Low</option>
                 </select>
             </div>
-            
+
             <div class="mb-4">
                 <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
-                <input type="text" id="category" name="category" 
-                       class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-[#000B5B] focus:border-[#FFE31A]">
+                <input type="text" id="category" name="category"
+                    class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-[#000B5B] focus:border-[#FFE31A]">
             </div>
-            
+
             <div class="flex justify-end">
-                <button type="button" onclick="closeModal()" 
-                        class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 mr-2">
+                <button type="button" onclick="closeModal()"
+                    class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 mr-2">
                     Cancel
                 </button>
-                <button type="submit" 
-                        class="bg-[#FFE31A] text-[#000B5B] px-4 py-2 rounded hover:bg-yellow-400">
+                <button type="submit" class="bg-[#FFE31A] text-[#000B5B] px-4 py-2 rounded hover:bg-yellow-400">
                     Register
                 </button>
             </div>
@@ -133,13 +135,16 @@
             <h2 class="text-2xl font-semibold text-[#000B5B] mb-4">Confirm Delete</h2>
 
             <form method="POST" id="deleteForm" class="inline-block" action="">
-                {% csrf_token %} 
-                <p class="text-lg text-gray-700 mb-4">Are you sure you want to delete the project "<span class="font-semibold">{{ project.title }}</span>"?</p>
+                {% csrf_token %}
+                <p class="text-lg text-gray-700 mb-4">Are you sure you want to delete the project "<span
+                        class="font-semibold">{{ project.title }}</span>"?</p>
                 <div class="flex space-x-4">
-                    <button type="button"  class="px-4 py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400">
+                    <button type="button"
+                        class="px-4 py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400">
                         Yes, delete
                     </button>
-                    <a href="{% url 'my_projects_list'%}" onclick="window.history.back();" ondblclick="closeDelete()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400">
+                    <a href="{% url 'my_projects_list'%}" onclick="window.history.back();" ondblclick="closeDelete()"
+                        class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400">
                         Cancel
                     </a>
                 </div>
@@ -155,7 +160,7 @@
         deleteForm.action = `{% url 'edit_project' 0 %}`.replace('0', projectId);
         document.getElementById("edit").classList.remove("hidden");
     }
-    
+
 
     function closeEdit() {
         const editModal = document.getElementById('edit');

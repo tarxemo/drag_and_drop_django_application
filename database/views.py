@@ -7,6 +7,11 @@ import json
 from django.core.management import call_command
 from django.apps import apps
 from TB.utils import *
+import requests
+from django.shortcuts import render, redirect
+from django.urls import reverse
+from django.conf import settings
+from django.contrib import messages
 
 def makemigrations_and_migrate():
     call_command('makemigrations')
@@ -42,9 +47,9 @@ class DynamicModelAPIView(APIView):
 
         # Filter for specific model if table_name is provided
         if model_name:
-            models_data = parse_models_file(model_name)
+            models_data = parse_models_file(request, model_name)
         else: 
-            models_data = parse_models_file()
+            models_data = parse_models_file(request)
         return Response(models_data, status=status.HTTP_200_OK)
 
 
@@ -55,18 +60,22 @@ class DynamicModelAPIView(APIView):
             data = json.loads(request.body.decode('utf-8'))
             print(data)
             model_name = data.get('model_name')
+            user_id = data.get('user_id')
+            app_id = data.get('app_id')
             fields = data.get('fields')
 
             if not model_name or not fields:
                 return Response({"error": "Model name and fields are required."}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Create the model dynamically
-            create_model_file(model_name, fields)
             
             DynamicModelLog.objects.create(
-                user=request.user if request.user.is_authenticated else None,
+                user=CustomUser.objects.get(id=user_id),
                 model_name=model_name,
+                application=Application.objects.get(id=app_id)
             )
+            
+            # Create the model dynamically
+            create_model_file(model_name, fields)
             
             return Response({"status": "success", "message": f"Model {model_name} created and migrations applied!"}, status=status.HTTP_201_CREATED)
 
@@ -110,19 +119,11 @@ class DynamicModelAPIView(APIView):
 
 
 
-import requests
-from django.shortcuts import render, redirect
-from django.urls import reverse
-from django.conf import settings
-from django.contrib import messages
-
 API_BASE_URL = 'http://127.0.0.1:8000/models/model/'  # Update this to your API's URL
 
 # List all models
 def list_models(request):
-    response = requests.get(API_BASE_URL)
-    models = response.json()
-    
+    models = fetch_models(request)
     return render(request, 'database/templates/list_models.html', {'models': models})
 
 # View model details
@@ -140,22 +141,31 @@ def view_model(request):
         # Handle case if model_name is not provided in the request
         return render(request, 'database/templates/view_model.html', {'error': 'Model name not provided'})
 
-# Create a new model
+
 def create_model(request):
     if request.method == 'POST':
         model_name = request.POST['model_name']
+        app_id = request.POST['app_id']
+        print(app_id)
+        print("&&&&&&&&&&&&&&&&")
         fields = {}  # You would parse fields from the form, potentially using JavaScript to add more fields
         
-        # Prepare and send the POST request
-        response = requests.post(API_BASE_URL, json={'model_name': model_name, 'fields': fields})
-        
-        if response.status_code == 201:
+        try:
+            DynamicModelLog.objects.create(
+                user=request.user,
+                model_name=model_name,
+                application=Application.objects.get(id=app_id)
+            )
+            create_model_file(model_name, fields)
+            
             messages.success(request, f'Model {model_name} created successfully!')
             return redirect('list_models')
-        else:
-            messages.error(request, 'Error creating model.')
+        
+        except Exception as e:
+            messages.error(request, f'Error creating model: {str(e)}')
     
-    return render(request, 'database/templates/create_model.html')
+    applications = Application.objects.filter(owner=request.user)
+    return render(request, 'database/templates/create_model.html', {'applications': applications})
 
 # Edit a model
 def edit_model(request):

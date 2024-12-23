@@ -32,6 +32,7 @@ class Project(models.Model):
     
     def __str__(self):
         return self.title
+    
 class Application(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField()

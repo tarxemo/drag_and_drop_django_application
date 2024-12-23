@@ -147,7 +147,7 @@ import re
 from bs4 import BeautifulSoup
 from django.conf import settings
 
-def parse_and_save_html(content_data, template_name, is_file_path=False):
+def parse_and_save_html(content_data, template_name, app_id, category, is_file_path=False):
     if is_file_path:
         with open(content_data, 'r', encoding='utf-8') as file:
             content = file.read()
@@ -155,8 +155,8 @@ def parse_and_save_html(content_data, template_name, is_file_path=False):
         content = content_data
 
     soup = BeautifulSoup(content, 'html.parser')
-    application = Application.objects.first()
-    template = Template.objects.create(name=template_name, application=application)
+    application = Application.objects.get(id=app_id)
+    template = Template.objects.create(name=template_name, application=application, category=category)
 
     def process_django_tag(tag_content, parent=None):
         """
