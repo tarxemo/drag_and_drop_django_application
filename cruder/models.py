@@ -32,3 +32,21 @@ class sample(models.Model):
     def __str__(self):
         return self.id
     
+class qwertyu(models.Model):
+    anania = models.TextField(max_length=200)
+
+    def __str__(self):
+        return self.id
+    
+class firstyghjfgjh(models.Model):
+    anania = models.TextField(max_length=200)
+
+    def __str__(self):
+        return self.id
+    
+class qwertyuawwwxe(models.Model):
+    anania = models.TextField(max_length=200)
+
+    def __str__(self):
+        return self.id
+    

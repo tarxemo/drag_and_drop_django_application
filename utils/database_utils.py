@@ -2,8 +2,15 @@
 import re
 import os
 from django.conf import settings
+from authApp.models import DynamicModelLog
 
-def parse_models_file(model_name=None):
+def fetch_models(request, model_name=None):
+    """
+    Fetch models either by filtering by model_name or get all models.
+    """
+    return parse_models_file(request, model_name)
+
+def parse_models_file(request, model_name=None):
     # Define the path to models.py
     models_path = os.path.join(settings.BASE_DIR, 'cruder', 'models.py')
     models_data = []
@@ -13,44 +20,32 @@ def parse_models_file(model_name=None):
     field_pattern = re.compile(r'^\s+(\w+)\s*=\s*models\.(\w+)\((.*?)\)')
 
     current_model = None
+    my_models =[model_names.model_name for model_names in DynamicModelLog.objects.filter(user=request.user)]
 
     with open(models_path, 'r') as file:
         for line in file:
-            # Check if the line defines a model
             model_match = model_pattern.match(line)
             if model_match:
-                # If there's an ongoing model, add it to the list before starting a new one
-                if current_model:
+                if current_model and current_model['model_name'] in my_models:
                     models_data.append(current_model)
-
-                    # If searching for a specific model and it matches, return it immediately
                     if model_name and current_model["model_name"] == model_name:
                         return current_model
-
-                # Start a new model
                 model_name_match = model_match.group(1)
                 current_model = {
                     "model_name": model_name_match,
                     "fields": {}
                 }
-
-            # Check if the line defines a field inside the current model
             elif current_model and (field_match := field_pattern.match(line)):
                 field_name = field_match.group(1)
                 field_type = field_match.group(2)
                 params_str = field_match.group(3)
-
-                # Parse field parameters from params_str
                 params = parse_field_params(params_str)
-
-                # Add the field to the current model
                 current_model["fields"][field_name] = {
                     "type": field_type,
                     "params": params
                 }
-
-    # After finishing the loop, ensure the last model is added
-    if current_model:
+    print(request.user.email)
+    if current_model and current_model['model_name'] in my_models:
         models_data.append(current_model)
 
         # If searching for a specific model and it matches, return it now

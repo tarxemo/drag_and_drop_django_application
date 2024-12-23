@@ -19,7 +19,7 @@
         <div>
             <label for="App_name" class="text-lg font-semibold text-[#091057] block">Select Application</label>
             <div class="relative mt-2">
-                <select name="app_id" id="App_name" 
+                <select name="app_id" id="app_id" 
                     class="block w-full p-3 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring focus:ring-[#133E87] transition duration-200 appearance-none">
                     {% for application in applications %}
                     <option value="{{application.id}}">{{application.name}}</option>
@@ -123,9 +123,13 @@
         // Submit form and create JSON data structure
         document.getElementById('createModelForm').addEventListener('submit', function (event) {
             event.preventDefault();
-
+            const appSelect = document.getElementById("app_id");
+            const appId = appSelect.value;
+            const userId = "{{ request.user.id }}";
             const jsonData = {
+                "user_id": userId,
                 "model_name": document.getElementById('model_name').value,
+                "app_id": appId,
                 "fields": {}
             };
 
