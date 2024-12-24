@@ -109,9 +109,8 @@
 
                 // Change button text and color
                 button.querySelector('span').textContent = 'Liked';
-                button.classList.remove('text-[#FFE31A]');
-                button.classList.add('text-[var(--primary-light)]');
-            } 
+                button.style.color = 'green';
+             } 
             // Handle unlike action
             else if (response.status === 'unliked') {
                 // Prevent decrementing like count below zero
@@ -122,8 +121,7 @@
 
                 // Change button text and color
                 button.querySelector('span').textContent = 'Like';
-                button.classList.remove('text-[var(--primary-light)]');
-                button.classList.add('text-[#FFE31A]');
+                button.style.color = '#FFE31A';
             }
         } else {
             console.log('Error:', xhr.status, xhr.responseText);
