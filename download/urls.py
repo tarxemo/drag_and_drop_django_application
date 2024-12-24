@@ -4,5 +4,6 @@ from .views import  *
 urlpatterns = [
     path('create_django_project/<int:project_id>/', create_django_project, name='create_django_project'),
     path('your_table_name/', list_view, name='your_table_list'),
+    path('build_project/<int:project_id>/', build_project, name='build_project'),
 
 ]

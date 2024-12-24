@@ -396,7 +396,7 @@ def upload_html(request):
         fs = FileSystemStorage()
         filename = fs.save(html_file.name, html_file)
         file_path = fs.path(filename)
-        parse_and_save_html(file_path, template_name, category, app_id)
+        parse_and_save_html(file_path, template_name, app_id, category, is_file_path=True)
         return redirect('template_list') 
     else:
         return render(request, 'upload_html.html')

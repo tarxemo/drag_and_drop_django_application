@@ -159,3 +159,15 @@ def create_django_project(request, project_id):
 
 def list_view(request):
     generate_table_list_view_code('Tag', request.user)
+    
+    
+def build_project(request, project_id):
+    project = Project.objects.get(id=project_id)
+    applications = project.applications.all()
+    for application in applications:
+        app_models = DynamicModelLog.objects.filter(id=application.id)
+        for app_model in app_models:
+            generate_template(request.user.username, app_model.model_name, "add")
+            generate_template(request.user.username, app_model.model_name, "list")
+            generate_template(request.user.username, app_model.model_name, "edit")
+            generate_template(request.user.username, app_model.model_name, "details")

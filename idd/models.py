@@ -83,6 +83,7 @@ class Template(models.Model):
     ('FORUM_PAGE', 'Forum or Discussion Page'),
     ('CHAT_PAGE', 'Message or Chat Page'),
     ('TESTIMONIAL_PAGE', 'Testimonial Page'),
+    ('DEFAULT', 'default'),
 ]
 
     application = models.ForeignKey(Application, on_delete=models.CASCADE)

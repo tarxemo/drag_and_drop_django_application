@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from bs4 import BeautifulSoup
 from idd.models import *
 from .form_utils import *
-
+from authApp.models import DynamicModelLog
 from django.template import Template as DjangoTemplate, Context
 from django.http import Http404
 
@@ -26,8 +26,8 @@ def generate_template(username, table_name, action):
             template_content = generate_list_view_html(table_name)
         elif action == "edit":
             template_content = generate_edit_view_html(table_name)
-        
-        template = parse_and_save_html(template_content, template_name)
+        application = DynamicModelLog.objects.get(user__username = username, model_name = table_name)
+        template = parse_and_save_html(template_content, template_name, application.id, "DEFAULT")
 
     # Build tag tree and handle Django tags
     def build_tag_tree(tag, indent_level=0):

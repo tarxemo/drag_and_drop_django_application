@@ -32,6 +32,10 @@
                             <a href="{% url 'project_information' project.id %}"><i class="fa-solid fa-street-view"></i>
                                 View</a>
                         </button>
+                        <button class="text-blue-500 hover:text-blue-700">
+                            <a href="{% url 'build_project' project.id %}"><i class="fa-solid fa-street-view"></i>
+                                build</a>
+                        </button>
                         <button onclick="openDelete('{{ project.id }}')" class="text-red-500 hover:text-red-700 ml-4">
                             <i class="fas fa-trash-alt"></i> Delete
                             <button class="text-green-500 hover:text-green-700 ml-4">
