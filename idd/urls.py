@@ -55,4 +55,8 @@ urlpatterns = [
     path('project_Details/edit/<int:project_id>/', details_for_project, name='edit_project'),
     path("register_app/", register_app, name="registerApp"),
     path('projects_apps/', project_apps_list, name="apps_list"),
+    path('edit_application/<int:app_id>/', edit_application, name='edit_application'),
+    path('edit_application/<int:app_id>/', edit_application, name='edit_application'),
+    path('like/<int:template_id>/', like_template, name='like_template'),
+
 ]

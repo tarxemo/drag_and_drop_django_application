@@ -9,7 +9,13 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import FileSystemStorage
 from django.template import Template as Django_template, Context as Django_context
 from django.contrib import messages
-
+from .forms import *
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from .models import Template, Like
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Count
 
 def homepage(request):
     if request.user.is_authenticated:
@@ -118,8 +124,6 @@ def project_details(request, projectId):
     detail = get_object_or_404(Project, id=projectId)
       
     return render(request,"details.html", {'detail': detail})
-
-
 
 
 def register_app(request):
@@ -476,30 +480,106 @@ def delete_view(request, table_name, pk):
     })
     return render(request, 'idd/templates/template.html', context)
 
+from django.db.models import Count, Exists, OuterRef
+from django.shortcuts import render, redirect
+
 def templates_gallery(request):
-    templates = Template.objects.all()
+    user = request.user  # Get the current logged-in user
+
+    # Annotate templates with like count and a boolean for whether the user liked the template
+    templates = Template.objects.annotate(
+        like_count=Count('likes'),
+        user_liked=Exists(
+            Like.objects.filter(template=OuterRef('pk'), user=user)
+        )
+    )
+
     parent_id = request.GET.get('parent_id')
     destination_id = request.GET.get('destination_id')
     source_id = request.GET.get('source_id')
-    if source_id != None and destination_id != None:
+    if source_id is not None and destination_id is not None:
         print("**************************************")
         copy_template(source_id, destination_id)
         return redirect("template_detail", destination_id)
+
     templates_with_html = [
         {
             'id': template.id,
             'name': template.name,
-            # 'first_tag':Tag.objects.filter(template=template, parent_tag=None).first(),
-            'html': generate_template_by_id(template.id)
+            'like_count': template.like_count,
+            'user_liked': template.user_liked,
+            'html': generate_template_by_id(template.id),
         }
         for template in templates
     ]
+
     return render(request, 'templates_gallery.html', {'templates': templates_with_html})
 
+ 
 
+@login_required
+@csrf_exempt
+def like_template(request, template_id):
+    if request.method == 'POST':
+        try:
+            template = get_object_or_404(Template, id=template_id)
+            user = request.user
+
+            # Check if the user has already liked the template
+            liked = Like.objects.filter(user=user, template=template)
+            if liked.exists():
+                # If liked already, unlike it by deleting the like entry
+                liked.delete()
+                action = 'unliked'  # Set action to 'unliked'
+            else:
+                # If not liked, create a new like entry
+                Like.objects.create(user=user, template=template)
+                action = 'liked'  # Set action to 'liked'
+
+            # Get the updated like count
+            like_count = template.likes.count()
+
+            # Return the action and the updated like count
+            return JsonResponse({
+                'status': action,
+                'like_count': like_count
+            })
+        except Exception as e:
+            # Return an error message in case of exception
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+    # Return an error message if the request method is not POST
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=400)
 def one_template_detail(request, template_id):
     template = get_object_or_404(Template, id=template_id)
     html_code = generate_template_by_id(template_id)
     return render(request, 'one_template_detail.html', {'template': template, 'html_code': html_code})
 
 
+#edit app_list
+def edit_application(request, app_id):
+    application = get_object_or_404(Application, id=app_id)
+    projects = Project.objects.all()
+    
+    if request.method == 'POST':
+        # Get the selected project and other form data
+        project_id = request.POST['project']  # Get selected project ID
+        app_name = request.POST['app_name']
+        description = request.POST.get('description', "")
+
+        # Get the project object by ID
+        project = Project.objects.get(id=project_id)
+
+        # Update the application fields
+        application.name = app_name
+        application.description = description
+        application.project = project  # Update the project
+        application.save()
+
+        # Redirect to the app list page after updating
+        return redirect('apps_list')  # Assuming 'app_list' is the correct URL name
+
+    return render(request, 'edit_application.html', {
+        'application': application,
+        'projects': projects
+    })

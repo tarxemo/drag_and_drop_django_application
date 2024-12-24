@@ -1,6 +1,6 @@
 # forms.py
 from django import forms
-
+from .models import Application
 class TableCreationForm(forms.Form):
     table_name = forms.CharField(label='Table Name', max_length=100)
 
@@ -19,3 +19,7 @@ class FieldCreationForm(forms.Form):
     ])
     max_length = forms.IntegerField(required=False, label='Max Length (for CharField only)')
 
+class ApplicationForm(forms.ModelForm):
+    class Meta:
+        model = Application
+        fields = ['name', 'description','owner'] 
