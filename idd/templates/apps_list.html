@@ -3,6 +3,20 @@
 {% block title %}My Applications{% endblock %}
 
 {% block content %}
+<style>
+    /* Alternate row background colors */
+    tbody tr:nth-child(odd) {
+        background-color: #f7fafc; /* Light background for odd rows */
+    }
+
+    tbody tr:nth-child(even) {
+        background-color: #e2e8f0; /* Slightly darker background for even rows */
+    }
+
+    tbody tr:hover {
+        background-color: #d1d5db; /* Highlight row on hover */
+    }
+</style>
 <div class="container mx-auto mt-5">
     <div class="flex justify-between items-center mb-4">
         <h1 class="text-3xl font-bold">My Applications</h1>
@@ -32,6 +46,11 @@
                                     <button class="text-blue-500 hover:text-blue-700">
                                         <a href="{% url 'template_list'%}?parent_id={{ application.id }}">
                                             <i class="fa-solid fa-street-view"></i> View
+                                        </a>
+                                    </button>
+                                    <button class="text-green-500 hover:text-green-700 ml-4">
+                                        <a href="{% url 'edit_application' application.id %}">
+                                            <i class="fas fa-edit"></i> Edit
                                         </a>
                                     </button>
                                     <button class="text-red-500 hover:text-red-700 ml-4">

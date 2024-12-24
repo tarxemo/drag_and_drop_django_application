@@ -3,6 +3,7 @@ from django.db.models.signals import pre_save, post_delete
 from django.dispatch import receiver
 from authApp.models import CustomUser  
 from django.db import transaction
+from django.conf import settings
 
 
 class Project(models.Model):
@@ -92,7 +93,18 @@ class Template(models.Model):
 
     def __str__(self):
         return self.name
+    
+class Like(models.Model):
+    template = models.ForeignKey(Template, on_delete=models.CASCADE, related_name='likes')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  # Use the correct user model
+    created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        unique_together = ('template', 'user')  # Ensures one like per user per template
+
+    def __str__(self):
+        return f'{self.user.username} likes {self.template.name}'
+    
 class Tag(models.Model):
     template = models.ForeignKey(Template, related_name='tags', on_delete=models.CASCADE)
     parent_tag = models.ForeignKey('self', related_name='children', null=True, blank=True, on_delete=models.CASCADE)

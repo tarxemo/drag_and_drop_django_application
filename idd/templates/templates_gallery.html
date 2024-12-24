@@ -1,67 +1,137 @@
-{% extends 'homepage.html'%}
-{% load static%}
-{%block title%}Templates Gallery {%endblock%}
+{% extends 'homepage.html' %}
+{% load static %}
+{% block title %}Templates Gallery{% endblock %}
+{% block content %}
+<meta name="csrf-token" content="{{ csrf_token }}" />
 
-{%block content%}
 <div class="bg-gray-100 text-gray-800">
-
-    <header class="bg-[#000B58] text-white py-6 shadow-lg">
-        <div class="container mx-auto px-4 ">
-            <h1 class="text-3xl font-bold">HTML Templates Gallery</h1>
-            <p class="text-lg text-[var(--primary-light)]">Explore and Interact with Beautiful HTML Pages</p>
-        </div>
-    </header>
-
-    <div class="container mx-auto px-4 py-10">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {% for template in templates %}
-            <div class="bg-white rounded-lg shadow-md hover-shadow p-6 relative">
-                <!-- Template Name -->
-                <h2 class="text-xl font-bold text-[var(--primary-dark)] mb-4">{{ template.name }}</h2>
-
-                <!-- HTML Preview -->
-                <div class="bg-gray-100 border border-gray-300 rounded-md overflow-hidden mb-4">
-                    <iframe srcdoc="{{ template.html }}" class="w-full h-48"></iframe>
-                </div>
-
-                <!-- Like Button -->
-                <div class="flex justify-between items-center">
-                    <button class="flex items-center gap-2 text-[var(--primary-light)]">
-                        <i class="fas fa-thumbs-up"></i> 
-                        <span>Like</span>
-                    </button> 
-                    {{template.first_tag.id}}
-                    {% if parent_id  %}
-                    <a href="{% url 'templates_gallery' %}?destination_id={{ parent_id }}&source_id={{ template.id }}" class="flex items-center gap-2 text-[var(--primary-dark)] hover:text-[var(--primary-light)]">
-                        <i class="fa fa-check-square"></i> 
-                        <span>Select</span>
-                    </a> 
-                    {% endif %}
-
-
-                    <span class="text-sm text-gray-500">Likes: <span class="font-bold">0</span></span>
-                </div>
-
-                <!-- Action Buttons -->
-                <div class="absolute top-2 right-2 flex gap-2">
-                    <a href="{% url 'one_template_detail' template.id%}" class="text-[var(--primary-dark)] hover:text-[var(--primary-light)]">
-                        <i class="fas fa-eye"></i>
-                    </a>
-                    <a href="{% url 'download_html' template.id %}" class="text-[var(--primary-dark)] hover:text-[var(--primary-light)]">
-                        <i class="fas fa-download"></i>
-                    </a>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
+  <header class="bg-[#000B58] text-white py-6 shadow-lg">
+    <div class="container mx-auto px-4">
+      <h1 class="text-3xl font-bold">HTML Templates Gallery</h1>
+      <p class="text-lg text-[var(--primary-light)]">
+        Explore and Interact with Beautiful HTML Pages
+      </p>
     </div>
+  </header>
 
-    <footer class="bg-gray-800 text-white py-4">
-        <div class="container mx-auto px-4">
-            <p class="text-center">&copy; 2024 Templates Gallery. All Rights Reserved.</p>
+  <div class="container mx-auto px-4 py-10">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      {% for template in templates %}
+      <div class="bg-white rounded-lg shadow-md hover-shadow p-6 relative">
+        <!-- Template Name -->
+        <h2 class="text-xl font-bold text-[var(--primary-dark)] mb-4">
+          {{ template.name }}
+        </h2>
+
+        <!-- HTML Preview -->
+        <div class="bg-gray-100 border border-gray-300 rounded-md overflow-hidden mb-4">
+          <iframe srcdoc="{{ template.html }}" class="w-full h-48"></iframe>
         </div>
-    </footer>
 
+        <!-- Like Button -->
+        <div class="flex justify-between items-center">
+            {% if template.user_liked %}
+            <button
+              class="like-button flex items-center gap-2 text-[var(--primary-light)]"
+              data-template-id="{{ template.id }}"
+              id="btn_id_{{ template.id }}"   
+              onclick="toggleLike({{ template.id }})"
+            >
+              <i class="fas fa-thumbs-up"></i>
+              <span>Liked</span>
+              <span class="like-count">{{ template.likes_count }}</span>
+            </button>
+            {% else %}
+            <button
+              class="like-button flex items-center gap-2 text-[#FFE31A]"
+              data-template-id="{{ template.id }}"
+              id="btn_id_{{ template.id }}"   
+              onclick="toggleLike({{ template.id }})"
+            >
+              <i class="fas fa-thumbs-up"></i>
+              <span>Like</span>
+              <span class="like-count">{{ template.likes_count }}</span>
+            </button>
+            {% endif %}
+          
+            <span class="text-sm text-blue-500">
+              Likes: <span class="font-bold" id="id_{{ template.id }}">{{ template.like_count }}</span>
+            </span>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="absolute top-2 right-2 flex gap-2">
+          <a href="{% url 'one_template_detail' template.id %}" class="text-[var(--primary-dark)] hover:text-[var(--primary-light)]">
+            <i class="fas fa-eye"></i>
+          </a>
+          <a href="{% url 'download_html' template.id %}" class="text-[var(--primary-dark)] hover:text-[var(--primary-light)]">
+            <i class="fas fa-download"></i>
+          </a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <footer class="bg-gray-800 text-white py-4">
+    <div class="container mx-auto px-4">
+      <p class="text-center">&copy; 2024 Templates Gallery. All Rights Reserved.</p>
+    </div>
+  </footer>
 </div>
-{%endblock%}
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+  function toggleLike(templateId) {
+    const button = document.getElementById(`btn_id_${templateId}`);  // Get the button element
+    const likeCountElement = document.getElementById(`id_${templateId}`);  // Get the like count element
+    
+    // Get the current like count displayed
+    let currentLikeCount = parseInt(likeCountElement.textContent);
+    
+    // Send AJAX request to toggle like/unlike
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", `/idd/like/${templateId}/`, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.setRequestHeader("X-CSRFToken", csrfToken);
+    
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            const response = JSON.parse(xhr.responseText);
+
+            // Handle like action
+            if (response.status === 'liked') {
+                currentLikeCount += 1;
+                likeCountElement.textContent = currentLikeCount;
+
+                // Change button text and color
+                button.querySelector('span').textContent = 'Liked';
+                button.classList.remove('text-[#FFE31A]');
+                button.classList.add('text-[var(--primary-light)]');
+            } 
+            // Handle unlike action
+            else if (response.status === 'unliked') {
+                // Prevent decrementing like count below zero
+                if (currentLikeCount > 0) {
+                    currentLikeCount -= 1;
+                    likeCountElement.textContent = currentLikeCount;
+                }
+
+                // Change button text and color
+                button.querySelector('span').textContent = 'Like';
+                button.classList.remove('text-[var(--primary-light)]');
+                button.classList.add('text-[#FFE31A]');
+            }
+        } else {
+            console.log('Error:', xhr.status, xhr.responseText);
+        }
+    };
+
+    xhr.send(JSON.stringify({ csrfmiddlewaretoken: csrfToken }));
+  }
+</script>
+
+{% endblock %}
